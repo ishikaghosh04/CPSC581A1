@@ -1,0 +1,51 @@
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+  background: #0a0a1a;
+  overflow: hidden;
+  height: 100vh;
+  position: relative;
+}
+
+#sky, #bg-stars {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+}
+
+#bg-stars { z-index: 1; }
+#sky { z-index: 2; }
+
+.star {
+  position: absolute;
+  cursor: pointer;
+  transition: 
+  filter 0.3s, 
+  transform 0.3s;
+}
+
+.star.selected {
+  filter: drop-shadow(0 0 12px currentColor);
+  transform: scale(1.15);
+}
+
+.hobby-icon {
+  position: absolute;
+  width: 24px;
+  opacity: 0.3;  
+  transition: opacity 0.3s;
+}
+
+.hobby-icon.shared { opacity: 1; }
+
+.connecting-line {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
