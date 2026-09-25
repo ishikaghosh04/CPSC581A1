@@ -9,7 +9,7 @@ function renderStars() {
     el.id = star.id;
     el.style.left = `${star.position.x}%`;
     el.style.top = `${star.position.y}%`;
-    el.textContent = "."; // TO DO: replace with star icon or image
+    el.textContent = "★"; // TO DO: replace with star icon or image
     el.style.color = "white";
     // user interactions
     el.addEventListener("mouseenter", () => handleHoverStart(star));
@@ -39,6 +39,7 @@ function handleClick(star) {
     selected = selected.filter(id => id !== star.id);
     el.classList.remove("selected");
     clearHobbyIcons(star.id);
+    toggleBgStars(star, false); // Hide this member's background stars
     if (selected.length < 2) clearPairEffects();
     return;
   }
@@ -48,10 +49,13 @@ function handleClick(star) {
     const removedId = selected.shift();
     document.getElementById(removedId).classList.remove("selected");
     clearHobbyIcons(removedId);
+    const removedStar = stars.find(star => star.id === removedId); // Hide the background stars of the removed member
+    toggleBgStars(removedStar, false);
   }
 
   selected.push(star.id);
   el.classList.add("selected");
+  toggleBgStars(star, true); // Show this member's background stars
   showHobbyIcons(star);
 
   if (selected.length === 2) {
@@ -74,7 +78,17 @@ function handlePair(id1, id2) {
 
   // TODO: highlight shared icons, dim the rest
   // TODO: draw connecting line between s1.position and s2.position
-  // TODO: light up background stars in the blended color
+}
+
+function toggleBgStars(star, show) {
+  const bgStars = document.getElementById(
+    `member${star.id.replace("star", "")}-bg-stars`
+  );
+
+  if (bgStars) {
+    bgStars.style.color = star.favColor;
+    bgStars.style.display = show ? "block" : "none";
+  }
 }
 
 function clearPairEffects() {

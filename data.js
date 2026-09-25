@@ -2,19 +2,19 @@ const stars = [
   {
     id: "star1",
     name: "Ishika",
-    personality: "extrovert",  
-    hoverTime: 3000,             
-    favColor: "#e8cd7c",       
-    hobbies: ["music", "drawing"],   
-    position: { x: 20, y: 25 } 
+    personality: "extrovert",
+    hoverTime: 3000,
+    favColor: "#e8cd7c",
+    hobbies: ["music", "drawing"],
+    position: { x: 20, y: 25 }
   },
   {
     id: "star2",
     name: "Utaha",
     personality: "introvert",
     hoverTime: 5000,
-    favColor: "#4ba3c7",
-    hobbies: ["hiking", "swimming"],
+    favColor: "#2db2e6",
+    hobbies: ["music", "crocheting", "hiking", "swimming"],
     position: { x: 70, y: 20 }
   },
   {
