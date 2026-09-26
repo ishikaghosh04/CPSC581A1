@@ -72,12 +72,42 @@ function clearHobbyIcons(starId) {
 }
 
 function handlePair(id1, id2) {
+  clearPairEffects();
+
   const s1 = stars.find(s => s.id === id1);
   const s2 = stars.find(s => s.id === id2);
-  const shared = s1.hobbies.filter(h => s2.hobbies.includes(h));
 
-  // TODO: highlight shared icons, dim the rest
-  // TODO: draw connecting line between s1.position and s2.position
+  const shared = [
+    ...s1.hobbies.filter(h => s2.hobbies.includes(h)),
+    ...(s1.sleep === s2.sleep ? [s1.sleep] : []),
+    ...(s1.personality === s2.personality ? [s1.personality] : [])
+  ];
+
+  if (shared.length === 0) return;
+
+  const sky = document.getElementById("sky");
+  const a = document.getElementById(id1).getBoundingClientRect();
+  const b = document.getElementById(id2).getBoundingClientRect();
+  const bounds = sky.getBoundingClientRect();
+
+  const x1 = a.left + a.width / 2 - bounds.left;
+  const y1 = a.top + a.height / 2 - bounds.top;
+  const x2 = b.left + b.width / 2 - bounds.left;
+  const y2 = b.top + b.height / 2 - bounds.top;
+
+  const line = document.createElement("div");
+  line.className = "connecting-line";
+  line.title = `Shared: ${shared.join(", ")}`;
+  line.style.left = `${x1}px`;
+  line.style.top = `${y1}px`;
+  line.style.width = `${Math.hypot(x2 - x1, y2 - y1)}px`;
+  line.style.transform = `rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
+
+  sky.appendChild(line);
+}
+
+function clearPairEffects() {
+  document.querySelectorAll(".connecting-line").forEach(line => line.remove());
 }
 
 function toggleBgStars(star, show) {

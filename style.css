@@ -44,7 +44,21 @@ body {
 #member4-bg-stars {
   z-index: 3;
 }
+.member-bg-stars {
+  filter:
+    drop-shadow(0 0 3px currentColor)
+    drop-shadow(0 0 7px currentColor);
+  animation: member-stars-shine 2.5s ease-in-out infinite alternate;
+}
 
+@keyframes member-stars-shine {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 2.75;
+  }
+}
 .star {
   position: absolute;
   cursor: pointer;
@@ -71,6 +85,10 @@ body {
 
 .connecting-line {
   position: absolute;
-  z-index: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 10px white;
+  transform-origin: left center;
   pointer-events: none;
+  z-index: -1;
 }
