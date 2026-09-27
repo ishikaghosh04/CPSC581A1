@@ -44,10 +44,10 @@ body {
 #member4-bg-stars {
   z-index: 3;
 }
+
 .member-bg-stars {
   filter:
-    drop-shadow(0 0 3px currentColor)
-    drop-shadow(0 0 7px currentColor);
+    drop-shadow(0 0 3px currentColor) drop-shadow(0 0 7px currentColor);
   animation: member-stars-shine 2.5s ease-in-out infinite alternate;
 }
 
@@ -55,6 +55,7 @@ body {
   from {
     opacity: 0.65;
   }
+
   to {
     opacity: 2.75;
   }
@@ -78,8 +79,8 @@ body {
 }
 
 .star.selected {
-  color: #ffd93b;
-  filter: drop-shadow(0 0 12px #ffd93b);
+  text-shadow: 0 0 12px var(--star-glow), 0 0 24px var(--star-glow);
+  filter: drop-shadow(0 0 8px var(--star-glow)) drop-shadow(0 0 16px var(--star-glow));
   scale: 1.15;
   cursor: default;
 }
@@ -102,6 +103,7 @@ body {
       0 0 14px var(--star-glow, #ffffff),
       0 0 24px var(--star-glow, #ffffff);
   }
+
   50% {
     scale: 1.2;
     text-shadow:
@@ -110,6 +112,7 @@ body {
       0 0 40px var(--star-glow, #ffffff),
       0 0 60px var(--star-glow, #ffffff);
   }
+
   100% {
     scale: 1;
     text-shadow:
@@ -120,9 +123,17 @@ body {
 }
 
 @keyframes pulse {
-0% { transform: scale(1); }
-50% { transform: scale(1.2); }
-100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pulse {
@@ -131,9 +142,21 @@ body {
 
 .hobby-icon {
   position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
   width: 24px;
   opacity: 0.3;
   transition: opacity 0.3s;
+}
+
+.hobby-icon.shared-hobby {
+  transform: translate(-50%, -50%) scale(1.8);
+  filter: drop-shadow(0 0 8px gold);
+}
+
+.hobby-line {
+  stroke-width: 2;
+  opacity: 0.6;
 }
 
 .hobby-icon.shared {
