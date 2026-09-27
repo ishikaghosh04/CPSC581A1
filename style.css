@@ -37,6 +37,11 @@ body {
   width: 100%;
   height: 100%;
 }
+.member-bg-stars path {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(2);
+}
 
 #member1-bg-stars,
 #member2-bg-stars,
@@ -75,6 +80,11 @@ body {
     scale 0.3s,
     text-shadow 0.3s;
   animation: pulse 2s infinite;
+}
+
+.star {
+  font-size: 70px;
+  line-height: 1;
 }
 
 .star.selected {
@@ -157,4 +167,513 @@ body {
   stroke-linecap: round;
   stroke-dasharray: 0.01 12.99;
   z-index: 1;
+}
+/* Reveal a member's name and chosen colour on hover or keyboard focus. */
+.star {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-family: inherit;
+}
+.star:hover,
+.star:focus-visible {
+  color: var(--star-glow);
+  text-shadow: 0 0 8px var(--star-glow), 0 0 20px var(--star-glow);
+}
+.star:focus-visible { outline: 2px solid white; outline-offset: 6px; }
+.star.selected {
+  color: var(--star-glow);
+  filter: drop-shadow(0 0 12px var(--star-glow));
+}
+.star-name {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  font: 600 16px/1.3 system-ui, sans-serif;
+  white-space: nowrap;
+  color: white;
+  text-shadow: 0 1px 8px #000, 0 0 8px var(--star-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+.star:hover .star-name,
+.star:focus-visible .star-name,
+.star.selected .star-name {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .star-name { transition: none; }
+}
+
+/* All hobbies appear after sustained hover or keyboard focus. */
+.star-detail {
+  position: absolute;
+  top: calc(100% + 25px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.hobby-tag {
+  padding: 4px 7px;
+  border-radius: 14px;
+  border: 1px solid var(--star-glow);
+  background: #11172de8;
+  color: white;
+  font: 12px/1.2 system-ui, sans-serif;
+  white-space: nowrap;
+  text-shadow: none;
+}
+.star:hover .star-detail,
+.star:focus-visible .star-detail {
+  opacity: 1;
+  transition-delay: 1.2s;
+}
+.star.selected .star-detail {
+  opacity: 1;
+  transition-delay: 0s;
+}
+@media (max-width: 600px) {
+  .star-detail { width: 160px; }
+  .hobby-tag { font-size: 10px; }
+}
+
+/* A connecting thread grows from one selected star toward another. */
+.connecting-line {
+  stroke: #c5edf2;
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: grow-line .7s ease-out forwards;
+}
+@keyframes grow-line { to { stroke-dashoffset: 0; } }
+.hobby-tag.shared {
+  background: #f7e4ad;
+  color: #161826;
+  border-color: #fff6d5;
+  box-shadow: 0 0 14px #ffe28d;
+  font-weight: 700;
+}
+#pair-caption {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 5;
+  width: min(540px, calc(100vw - 28px));
+  padding: 13px 17px;
+  border: 1px solid #b9e4e4;
+  border-radius: 14px;
+  background: #10172bea;
+  color: white;
+  font: 14px/1.4 system-ui, sans-serif;
+  transform: translateX(-50%) translateY(14px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s, visibility .25s;
+}
+#pair-caption.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+#pair-caption strong { display: block; margin-bottom: 5px; font-size: 16px; }
+#pair-caption p { margin: 3px 0; }
+@media (prefers-reduced-motion: reduce) {
+  .connecting-line { animation: none; stroke-dashoffset: 0; }
+  #pair-caption { transition: none; }
+}
+
+/* A playful image appears when two selected members share music. */
+.shared-reveal {
+  position: fixed;
+  z-index: 7;
+  width: clamp(90px, 11vw, 130px);
+  height: clamp(90px, 11vw, 130px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #efc5ff77 8%, #ffd58c25 50%, transparent 72%);
+  filter: drop-shadow(0 0 18px #ffe3aa77);
+  animation: music-pop .7s cubic-bezier(.18, 1.7, .36, 1) both;
+}
+.shared-reveal img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: cat-groove 2.1s ease-in-out .7s infinite;
+}
+.music-note {
+  position: absolute;
+  top: 38%;
+  color: #ffe498;
+  font: bold 44px/1 system-ui, sans-serif;
+  text-shadow: 0 0 16px #ffc7f2;
+  animation: note-dance 1.6s ease-in-out .7s infinite alternate;
+}
+.music-note.left { left: -13%; }
+.music-note.right { right: -13%; animation-delay: 1s; color: #85dfff; }
+.music-label {
+  display: block;
+  width: max-content;
+  max-width: 180px;
+  margin: -12px auto 0;
+  padding: 6px 10px;
+  border: 1px solid #ffdfad;
+  border-radius: 20px;
+  background: #15172de6;
+  color: #fff2d8;
+  font: 700 11px/1.2 system-ui, sans-serif;
+  letter-spacing: .11em;
+  text-align: center;
+  box-shadow: 0 0 14px #eeadff77;
+}
+@keyframes music-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.15) rotate(-15deg); filter: brightness(3); }
+  55% { opacity: 1; transform: translate(-50%, -50%) scale(1.16) rotate(5deg); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
+}
+@keyframes cat-groove { 50% { transform: translateY(-8px) rotate(3deg); } }
+@keyframes note-dance { to { transform: translateY(-24px) rotate(16deg); opacity: .55; } }
+@media (prefers-reduced-motion: reduce) {
+  .shared-reveal, .shared-reveal img, .music-note { animation: none; }
+}
+
+/* Give each shared hobby its own colour while using the same pop animation. */
+.shared-reveal.scene-hiking {
+  background: radial-gradient(circle, #8fe8b277 8%, #b5edc02d 50%, transparent 72%);
+  filter: drop-shadow(0 0 18px #80e9bd88);
+}
+.shared-reveal.scene-running {
+  background: radial-gradient(circle, #ffd08488 8%, #ff87822d 50%, transparent 72%);
+  filter: drop-shadow(0 0 18px #ffa88899);
+}
+.shared-reveal.scene-drawing {
+  background: radial-gradient(circle, #ffb4dc66 8%, #b7d9ff33 50%, transparent 72%);
+  filter: drop-shadow(0 0 18px #f7bcf588);
+}
+.scene-drawing .music-label { border-color: #f3bee9; color: #ffe9f8; }
+.scene-drawing .music-note { color: #f7caee; }
+.scene-hiking .music-label { border-color: #9bf0c4; color: #dbffeb; }
+.scene-running .music-label { border-color: #ffbd91; color: #fff2dd; }
+.scene-hiking .music-note { color: #adffd4; }
+.scene-running .music-note { color: #ffcd92; }
+/* Drag the sun or moon into the sky to reveal the team's rhythms. */
+#time-controls { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
+.time-control {
+  position: absolute; top: 16px; left: 40%; z-index: 2;
+  width: 96px; height: 110px; border: 0;
+  border-radius: 50%; background: transparent; color: #fff9e9;
+  font: 600 12px/1.2 system-ui, sans-serif; cursor: grab;
+  touch-action: none; user-select: none; pointer-events: auto;
+  transition: filter .2s;
+}
+.time-control small { display: block; font: inherit; margin-top: 3px; text-shadow: 0 0 8px #1b213d; }
+#moon-control { left: auto; right: 40%; }
+.time-control.dragging { cursor: grabbing; }
+.time-control:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.time-control[aria-pressed="true"] { filter: brightness(1.3); }
+.celestial-art { display: block; position: relative; margin: auto; width: 82px; height: 82px; }
+.sun-rays {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, #ffca64 0deg 9deg, transparent 10deg 30deg);
+  filter: drop-shadow(0 0 14px #ffb652);
+  animation: sun-spin 18s linear infinite;
+}
+.sun-core {
+  position: absolute; inset: 15px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #fff8bb, #ffce54 54%, #f78337 100%);
+  box-shadow: 0 0 12px 5px #ffcc6699, 0 0 38px 12px #ffab4e66;
+  animation: sun-breathe 2.6s ease-in-out infinite alternate;
+}
+.moon-orbit { position: absolute; inset: 8px; border: 1px solid #c3d5ff66; border-radius: 50%; animation: sun-spin 10s linear infinite; }
+.moon-core {
+  position: absolute; inset: 11px 16px 13px 16px; border-radius: 50%;
+  background: radial-gradient(circle at 25% 35%, #fffefa, #dce4ff 62%, #8ca9e2);
+  box-shadow: 0 0 16px #c8d8ff, 0 0 42px #93b6ff88;
+  animation: moon-float 3.5s ease-in-out infinite alternate;
+}
+.moon-core::after {
+  content: ""; position: absolute; inset: -7px -12px 7px 15px; border-radius: 50%;
+  background: #0a0a1a; box-shadow: -4px 1px 5px #ffffff33;
+}
+.moon-spark { position: absolute; color: #ddebff; font: 19px/1 system-ui; text-shadow: 0 0 12px #ddebff; animation: moon-twinkle 1.8s ease-in-out infinite alternate; }
+.moon-spark.one { top: 8px; right: 5px; }
+.moon-spark.two { bottom: 8px; left: 1px; font-size: 12px; animation-delay: .8s; }
+@keyframes sun-spin { to { transform: rotate(360deg); } }
+@keyframes sun-breathe { to { transform: scale(1.09); box-shadow: 0 0 18px 8px #ffdc8abb, 0 0 45px 17px #ff9c4b77; } }
+@keyframes moon-float { to { transform: translateY(-5px) rotate(-4deg); } }
+@keyframes moon-twinkle { to { opacity: .3; transform: scale(.65); } }
+#time-target {
+  position: absolute; left: 50%; top: 43%; transform: translate(-50%, -50%);
+  display: grid; place-items: center; width: 190px; height: 105px;
+  border: 2px dashed #cdd7f488; border-radius: 55%;
+  color: #e5eaff; background: #1b234c55;
+  font: 600 12px/1.3 system-ui, sans-serif; text-align: center;
+  opacity: 0; transition: opacity .2s, background .2s;
+}
+#time-controls.dragging #time-target { opacity: 1; }
+#time-controls.in-target #time-target { background: #f8e7a755; }
+.screen-reader-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.star.time-match { color: var(--time-color); scale: 1.37; filter: drop-shadow(0 0 18px var(--time-color)) drop-shadow(0 0 28px var(--time-color)); }
+.star.time-match::after {
+  content: attr(data-time-label); position: absolute; top: -11px; left: 50%;
+  translate: -50% -100%; white-space: nowrap;
+  color: var(--time-color); font: 700 11px/1 system-ui, sans-serif;
+  text-shadow: 0 0 9px var(--time-color);
+}
+@media (max-width: 600px) {
+  #sun-control { left: 14px; }
+  #moon-control { left: auto; right: 14px; }
+  .star.time-match { scale: 1.23; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star.time-match, .time-control, .sun-rays, .sun-core, .moon-orbit, .moon-core, .moon-spark { animation: none; transition: none; }
+}
+/* Selected stars show a tidy profile beside the star. */
+.star.selected .star-name {
+  top: calc(50% - 29px);
+  left: calc(100% + 14px);
+  transform: none;
+  font-size: 18px;
+}
+.star.selected .star-detail {
+  top: calc(50% + 2px);
+  left: calc(100% + 14px);
+  transform: none;
+  width: max-content;
+  max-width: 155px;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 6px;
+}
+.star.selected .hobby-tag {
+  display: block;
+  font-size: 12px;
+}
+/* Ishika and Yasmin have their names and hobbies on the left. */
+#star1.selected .star-name,
+#star3.selected .star-name {
+  left: auto;
+  right: calc(100% + 14px);
+  text-align: right;
+}
+#star1.selected .star-detail,
+#star3.selected .star-detail {
+  left: auto;
+  right: calc(100% + 14px);
+  align-items: flex-end;
+}
+@media (max-width: 600px) {
+  .star.selected .star-name { font-size: 15px; }
+  .star.selected .hobby-tag { font-size: 10px; padding: 4px 5px; }
+  #star1.selected .star-name, #star3.selected .star-name,
+  #star1.selected .star-detail, #star3.selected .star-detail {
+    right: calc(100% + 6px);
+  }
+  #star2.selected .star-name, #star4.selected .star-name,
+  #star2.selected .star-detail, #star4.selected .star-detail {
+    left: calc(100% + 6px);
+  }
+}
+
+/* Hover and keyboard focus use the same profile placement as selection. */
+.star:is(:hover, :focus-visible) .star-name {
+  top: calc(50% - 29px);
+  left: calc(100% + 14px);
+  transform: none;
+  font-size: 18px;
+}
+.star:is(:hover, :focus-visible) .star-detail {
+  top: calc(50% + 2px);
+  left: calc(100% + 14px);
+  transform: none;
+  width: max-content;
+  max-width: 155px;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 6px;
+}
+.star:is(:hover, :focus-visible) .hobby-tag {
+  display: block;
+  font-size: 12px;
+}
+#star1:is(:hover, :focus-visible) .star-name,
+#star3:is(:hover, :focus-visible) .star-name {
+  left: auto;
+  right: calc(100% + 14px);
+  text-align: right;
+}
+#star1:is(:hover, :focus-visible) .star-detail,
+#star3:is(:hover, :focus-visible) .star-detail {
+  left: auto;
+  right: calc(100% + 14px);
+  align-items: flex-end;
+}
+@media (max-width: 600px) {
+  .star:is(:hover, :focus-visible) .star-name { font-size: 15px; }
+  .star:is(:hover, :focus-visible) .hobby-tag { font-size: 10px; padding: 4px 5px; }
+  #star1:is(:hover, :focus-visible) .star-name,
+  #star3:is(:hover, :focus-visible) .star-name,
+  #star1:is(:hover, :focus-visible) .star-detail,
+  #star3:is(:hover, :focus-visible) .star-detail { right: calc(100% + 6px); }
+  #star2:is(:hover, :focus-visible) .star-name,
+  #star4:is(:hover, :focus-visible) .star-name,
+  #star2:is(:hover, :focus-visible) .star-detail,
+  #star4:is(:hover, :focus-visible) .star-detail { left: calc(100% + 6px); }
+}
+
+/* Reveal each matching person's name beside a brighter, stronger star. */
+.star.time-match {
+  font-weight: 900;
+  -webkit-text-stroke: 1.3px currentColor;
+  scale: 1.52;
+}
+.star.time-match::after,
+.star.time-match .star-name,
+.star.time-match .star-detail {
+  -webkit-text-stroke: 0;
+}
+.star.time-match .star-name {
+  opacity: 1;
+  color: var(--time-color);
+  font-size: 19px;
+  font-weight: 800;
+  text-shadow: 0 0 12px var(--time-color), 0 1px 8px #080a20;
+}
+.star.time-match:not(.selected) .star-name {
+  top: 50%;
+  left: calc(100% + 14px);
+  transform: translateY(-50%);
+}
+#star1.time-match:not(.selected) .star-name,
+#star3.time-match:not(.selected) .star-name {
+  left: auto;
+  right: calc(100% + 14px);
+  text-align: right;
+}
+@media (max-width: 600px) {
+  .star.time-match { scale: 1.28; }
+  .star.time-match .star-name { font-size: 15px; }
+}
+
+/* When two stars connect, their difference unfolds into two colored portraits. */
+#pair-caption:has(.difference-comparison) {
+  width: min(590px, calc(100vw - 28px));
+}
+.difference-comparison {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-top: 11px;
+}
+.difference-card {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--card-color);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--card-color) 16%, #11172d);
+  box-shadow: inset 0 0 16px color-mix(in srgb, var(--card-color) 20%, transparent),
+              0 0 14px color-mix(in srgb, var(--card-color) 22%, transparent);
+  animation: difference-appear .55s cubic-bezier(.2, 1.3, .4, 1) both;
+}
+.difference-card:last-child { animation-delay: .13s; }
+.difference-symbol {
+  flex: 0 0 32px;
+  color: var(--card-color);
+  font: 32px/1 system-ui, sans-serif;
+  text-align: center;
+  text-shadow: 0 0 12px var(--card-color);
+}
+.difference-card b, .difference-card small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.difference-card b { color: var(--card-color); font: 700 13px/1.3 system-ui, sans-serif; }
+.difference-card small { color: #f4f5ff; font: 12px/1.3 system-ui, sans-serif; }
+.difference-link { color: #fff0bc; text-align: center; font-size: 22px; text-shadow: 0 0 12px #fff0bc; animation: difference-spark 2s ease-in-out infinite alternate; }
+@keyframes difference-appear { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes difference-spark { to { opacity: .45; transform: scale(.8); } }
+@media (max-width: 460px) {
+  .difference-comparison { gap: 3px; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); }
+  .difference-card { padding: 7px 6px; gap: 4px; }
+  .difference-symbol { flex-basis: 22px; font-size: 23px; }
+  .difference-card b { font-size: 11px; }
+  .difference-card small { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .difference-card, .difference-link { animation: none; }
+}
+
+/* Drag the animated campfire into the sky to show social distance. */
+#campfire-control {
+  position: fixed; top: 16px; left: calc(50% - 49px); z-index: 10;
+  width: 98px; height: 112px; border: 0; background: transparent;
+  color: #ffdeb2; font: 600 12px/1.2 system-ui, sans-serif;
+  text-shadow: 0 1px 9px #121020; cursor: grab;
+  touch-action: none; user-select: none; transition: filter .2s;
+}
+#campfire-control.dragging { cursor: grabbing; }
+#campfire-control:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+#campfire-control small { display: block; margin-top: 3px; }
+#campfire-control.near-center, #campfire-control[aria-pressed="true"] { filter: drop-shadow(0 0 20px #ffa83d); }
+.campfire-art { position: relative; display: block; width: 80px; height: 80px; margin: auto; }
+.campfire-art::before {
+  content: ''; position: absolute; left: 12px; right: 12px; bottom: 7px;
+  height: 22px; border-radius: 50%; background: #f875193d; filter: blur(10px);
+  animation: camp-glow 1.7s ease-in-out infinite alternate;
+}
+.flame { position: absolute; bottom: 23px; left: 22px; width: 36px; height: 52px;
+  border-radius: 80% 15% 65% 55%; transform: rotate(45deg);
+  transform-origin: 50% 85%; animation: camp-flicker 1.2s ease-in-out infinite alternate;
+}
+.flame-back { background: linear-gradient(130deg, #ffeaaa, #ff9f34 62%, #df3a1d);
+  box-shadow: 0 0 12px #ff8b2c, 0 0 32px #e5623577; }
+.flame-front { left: 31px; bottom: 24px; width: 23px; height: 32px;
+  background: linear-gradient(130deg, #fffcd9, #ffd77a);
+  animation-delay: -.65s; }
+.log { position: absolute; bottom: 14px; left: 14px; width: 52px; height: 11px;
+  border-radius: 8px; background: linear-gradient(#9b5a33, #442a28);
+  box-shadow: inset 0 2px 2px #d28b51; }
+.log-one { transform: rotate(23deg); } .log-two { transform: rotate(-23deg); }
+.ember { position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: #ffe09c; box-shadow: 0 0 8px #ffac45;
+  animation: ember-rise 2s ease-out infinite; }
+.ember-one { left: 25px; bottom: 45px; } .ember-two { right: 22px; bottom: 48px; animation-delay: -1s; }
+@keyframes camp-flicker { to { transform: rotate(49deg) scale(.86, 1.13); } }
+@keyframes camp-glow { to { opacity: .65; transform: scale(1.35); } }
+@keyframes ember-rise { to { opacity: 0; translate: 11px -39px; } }
+/* Moving left and top keeps existing click, hover, and connection geometry intact. */
+.star { transition: left .8s cubic-bezier(.2,.7,.2,1), top .8s cubic-bezier(.2,.7,.2,1), color .3s, filter .3s, scale .3s, text-shadow .3s; }
+.star.campfire-star { color: var(--star-glow); }
+.star.campfire-star .star-name { opacity: 1; }
+.star.campfire-star[data-social-type="extrovert"] { filter: drop-shadow(0 0 17px #ffd38e); }
+.star.campfire-star[data-social-type="ambivert"] { filter: drop-shadow(0 0 9px #ffc88b); }
+.star.campfire-star[data-social-type="introvert"] { filter: drop-shadow(0 0 6px var(--star-glow)); }
+#campfire-sparks { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.social-spark { position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: #ffdb94; box-shadow: 0 0 9px #ff9b4e;
+  animation: social-orbit 2.7s linear infinite; }
+.social-spark.ambivert { width: 3px; height: 3px; opacity: .7; animation-duration: 3.5s; }
+@keyframes social-orbit { from { transform: rotate(var(--angle)) translateX(33px) scale(.8); opacity: 0; }
+  40% { opacity: 1; } to { transform: rotate(calc(var(--angle) + 360deg)) translateX(49px) scale(.3); opacity: 0; } }
+@media (max-width: 600px) {
+  #campfire-control { left: calc(50% - 49px); }
+  .star.campfire-star .star-name { font-size: 13px; }
+  .star.campfire-star .star-detail { max-width: 105px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star, .flame, .ember, .campfire-art::before, .social-spark { animation: none; transition: none; }
 }

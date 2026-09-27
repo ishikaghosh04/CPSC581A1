@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="A pencil draws a colorful shooting star">
+  <defs>
+    <linearGradient id="ink" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#80defb"/><stop offset=".48" stop-color="#e2b9ff"/><stop offset="1" stop-color="#ffd897"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <style>
+    .trail{fill:none;stroke:url(#ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:320;stroke-dashoffset:320;animation:draw 3.8s ease-in-out infinite}
+    .pencil{transform-origin:118px 49px;animation:sketch 3.8s ease-in-out infinite}
+    .spark{animation:twinkle 3.8s ease-in-out infinite}
+    .late{animation-delay:.35s}
+    @keyframes draw{0%,8%{stroke-dashoffset:320;opacity:1}70%,83%{stroke-dashoffset:0;opacity:1}98%,100%{stroke-dashoffset:0;opacity:0}}
+    @keyframes sketch{0%,8%{transform:translate(-84px,76px) rotate(-12deg);opacity:1}35%{transform:translate(-52px,12px) rotate(8deg)}65%{transform:translate(-13px,23px) rotate(-8deg)}83%{transform:translate(0,0);opacity:1}95%,100%{transform:translate(0,0);opacity:0}}
+    @keyframes twinkle{0%,40%{opacity:0;transform:scale(.4)}70%,82%{opacity:1;transform:scale(1)}95%,100%{opacity:0;transform:scale(.4)}}
+    @media (prefers-reduced-motion:reduce){.trail,.pencil,.spark{animation:none}.trail{stroke-dashoffset:0}.spark{opacity:1}}
+  </style>
+  <rect x="16" y="18" width="128" height="123" rx="17" fill="#161c38" stroke="#b5c9e9" stroke-opacity=".5"/>
+  <path d="M32 111 C48 113 47 72 72 77 C85 81 70 107 92 97 C110 89 93 61 119 49" class="trail" filter="url(#glow)"/>
+  <g class="pencil" filter="url(#glow)">
+    <path d="M111 57 L128 30 Q131 25 136 29 L140 32 Q143 35 140 40 L122 65 Z" fill="#ffd578" stroke="#f6e4ac" stroke-width="1.5"/>
+    <path d="M111 57 L122 65 L117 73 Z" fill="#f6d6b4"/><path d="M117 73 L115 67 L119 69 Z" fill="#343755"/>
+    <path d="M128 30 L140 40" stroke="#fff0c4" stroke-width="2"/>
+  </g>
+  <g class="spark" style="transform-origin:42px 46px"><path d="M42 38 L44 44 L50 46 L44 48 L42 54 L40 48 L34 46 L40 44 Z" fill="#ffb5e0"/></g>
+  <g class="spark late" style="transform-origin:104px 117px"><path d="M104 111 L106 115 L110 117 L106 119 L104 123 L102 119 L98 117 L102 115 Z" fill="#aeefff"/></g>
+</svg>
