@@ -1,16 +1,23 @@
-let selected = []; // array of selected star IDs(upto 2 for now i think)
-const hoverTimers = {};  // store hover timers for each star
+let selected = []; // array of selected star IDs
+
+const hoverTimers = {}; // store hover timers for each star
+const hoverState = {}; 
 
 function renderStars() {
   const sky = document.getElementById("sky");
+  const lines = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  lines.id = "constellation-lines";
+  sky.appendChild(lines);
+
   stars.forEach(star => {
     const el = document.createElement("div");
     el.classList.add("star");
     el.id = star.id;
     el.style.left = `${star.position.x}%`;
     el.style.top = `${star.position.y}%`;
+    el.style.setProperty("--star-glow", "#ffffff");
     el.textContent = "★"; // TO DO: replace with star icon or image
-    el.style.color = "white";
+
     // user interactions
     el.addEventListener("mouseenter", () => handleHoverStart(star));
     el.addEventListener("mouseleave", () => handleHoverEnd(star));
@@ -18,49 +25,134 @@ function renderStars() {
 
     sky.appendChild(el);
   });
+
+  drawConstellation();
+}
+
+function isSelected(id) {
+  return selected.includes(id);
 }
 
 function handleHoverStart(star) {
+  if (isSelected(star.id)) return;
+
+  clearTimeout(hoverTimers[star.id]);
+  hoverState[star.id] = true;
+
+  const el = document.getElementById(star.id);
+  if (el) {
+    el.classList.remove("hover-glow-faint");
+    el.classList.remove("hover-glow-bright");
+  }
+
   hoverTimers[star.id] = setTimeout(() => {
-    document.getElementById(star.id).style.color = star.favColor; // currently it changes the user star colour to their fav colour
-    // TODO: shine animation
-  }, star.hoverTime);
+    if (!hoverState[star.id] || isSelected(star.id)) return;
+    const el = document.getElementById(star.id);
+    el.classList.add("hover-glow-faint");
+
+    hoverTimers[star.id] = setTimeout(() => {
+      if (!hoverState[star.id] || isSelected(star.id)) return;
+      const el = document.getElementById(star.id);
+      el.classList.remove("hover-glow-faint");
+      el.classList.add("hover-glow-bright");
+    }, star.hoverTime);
+  }, 1000);
 }
 
 function handleHoverEnd(star) {
   clearTimeout(hoverTimers[star.id]);
+  delete hoverTimers[star.id];
+  delete hoverState[star.id];
+
+  const el = document.getElementById(star.id);
+  if (!el) return;
+  el.classList.remove("hover-glow-faint");
+  el.classList.remove("hover-glow-bright");
 }
+
+function clearHover(starId) {
+  clearTimeout(hoverTimers[starId]);
+  delete hoverTimers[starId];
+  delete hoverState[starId];
+
+  const el = document.getElementById(starId);
+  if (!el) return;
+  el.classList.remove("hover-glow-faint");
+  el.classList.remove("hover-glow-bright");
+}
+
 // components of this code is generated using https://chat.openai.com/chat
 function handleClick(star) {
-  const el = document.getElementById(star.id);
+  clearHover(star.id);
 
-  if (selected.includes(star.id)) {
-    // unselect
+  if (isSelected(star.id)) {
     selected = selected.filter(id => id !== star.id);
-    el.classList.remove("selected");
+    document.getElementById(star.id).classList.remove("selected");
     clearHobbyIcons(star.id);
-    toggleBgStars(star, false); // Hide this member's background stars
-    if (selected.length < 2) clearPairEffects();
+    toggleBgStars(star, false);
+    drawConstellation();
     return;
   }
 
-  if (selected.length === 2) {
-    // cap at 2 — drop oldest selection
-    const removedId = selected.shift();
-    document.getElementById(removedId).classList.remove("selected");
-    clearHobbyIcons(removedId);
-    const removedStar = stars.find(star => star.id === removedId); // Hide the background stars of the removed member
-    toggleBgStars(removedStar, false);
-  }
-
   selected.push(star.id);
-  el.classList.add("selected");
-  toggleBgStars(star, true); // Show this member's background stars
-  showHobbyIcons(star);
 
-  if (selected.length === 2) {
-    handlePair(selected[0], selected[1]);
+  const el = document.getElementById(star.id);
+  el.classList.add("selected");
+  toggleBgStars(star, true);
+  showHobbyIcons(star);
+  drawConstellation();
+}
+
+function drawConstellation() {
+  const svg = document.getElementById("constellation-lines");
+  if (!svg) return;
+
+  const sky = document.getElementById("sky");
+  svg.innerHTML = "";
+  svg.setAttribute("viewBox", `0 0 ${sky.clientWidth} ${sky.clientHeight}`);
+
+  for (let i = 0; i < selected.length; i++) {
+    for (let j = i + 1; j < selected.length; j++) {
+      const start = starCenter(selected[i]);
+      const end = starCenter(selected[j]);
+      if (!start || !end) continue;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", start.x);
+      line.setAttribute("y1", start.y);
+      line.setAttribute("x2", end.x);
+      line.setAttribute("y2", end.y);
+      line.setAttribute("class", "connecting-line");
+
+      svg.appendChild(line);
+    }
   }
+}
+
+function starCenter(id) {
+  const sky = document.getElementById("sky");
+  const el = document.getElementById(id);
+  if (!sky || !el) return null;
+
+  const bounds = sky.getBoundingClientRect();
+  const box = el.getBoundingClientRect();
+
+  return {
+    x: box.left + box.width / 2 - bounds.left,
+    y: box.top + box.height / 2 - bounds.top
+  };
+}
+
+function sharedTraits(id1, id2) {
+  const s1 = stars.find(s => s.id === id1);
+  const s2 = stars.find(s => s.id === id2);
+  if (!s1 || !s2) return [];
+
+  return [
+    ...s1.hobbies.filter(h => s2.hobbies.includes(h)),
+    ...(s1.sleep === s2.sleep ? [s1.sleep] : []),
+    ...(s1.personality === s2.personality ? [s1.personality] : [])
+  ];
 }
 
 function showHobbyIcons(star) {
@@ -69,45 +161,6 @@ function showHobbyIcons(star) {
 
 function clearHobbyIcons(starId) {
   // TODO: remove that star's hobby icon elements
-}
-
-function handlePair(id1, id2) {
-  clearPairEffects();
-
-  const s1 = stars.find(s => s.id === id1);
-  const s2 = stars.find(s => s.id === id2);
-
-  const shared = [
-    ...s1.hobbies.filter(h => s2.hobbies.includes(h)),
-    ...(s1.sleep === s2.sleep ? [s1.sleep] : []),
-    ...(s1.personality === s2.personality ? [s1.personality] : [])
-  ];
-
-  if (shared.length === 0) return;
-
-  const sky = document.getElementById("sky");
-  const a = document.getElementById(id1).getBoundingClientRect();
-  const b = document.getElementById(id2).getBoundingClientRect();
-  const bounds = sky.getBoundingClientRect();
-
-  const x1 = a.left + a.width / 2 - bounds.left;
-  const y1 = a.top + a.height / 2 - bounds.top;
-  const x2 = b.left + b.width / 2 - bounds.left;
-  const y2 = b.top + b.height / 2 - bounds.top;
-
-  const line = document.createElement("div");
-  line.className = "connecting-line";
-  line.title = `Shared: ${shared.join(", ")}`;
-  line.style.left = `${x1}px`;
-  line.style.top = `${y1}px`;
-  line.style.width = `${Math.hypot(x2 - x1, y2 - y1)}px`;
-  line.style.transform = `rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
-
-  sky.appendChild(line);
-}
-
-function clearPairEffects() {
-  document.querySelectorAll(".connecting-line").forEach(line => line.remove());
 }
 
 function toggleBgStars(star, show) {
@@ -121,12 +174,10 @@ function toggleBgStars(star, show) {
   }
 }
 
-function clearPairEffects() {
-  // TODO: remove line, reset all hobby icons to dim, reset bg stars
-}
-
 function blendColors(hex1, hex2) {
   // simple midpoint RGB blend — fill in when you get to bg color logic
 }
+
+window.addEventListener("resize", drawConstellation);
 
 renderStars();

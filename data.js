@@ -35,7 +35,7 @@ const stars = [
     personality: "introvert",
     sleep: "night owl",
     hoverTime: 5000,
-    favColor: "#309035",
+    favColor: "#71b452",
     hobbies: ["pickleball", "reading"],
     position: { x: 75, y: 70 }
   }
