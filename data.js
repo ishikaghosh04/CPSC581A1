@@ -7,7 +7,7 @@ const stars = [
     hoverTime: 3000,
     favColor: "#e8cd7c",
     hobbies: ["Music", "Drawing", "Running"],
-    position: { x: 20, y: 35 }
+    position: { x: 20, y: 30 }
   },
   {
     id: "star2",
@@ -27,7 +27,7 @@ const stars = [
     hoverTime: 4000,
     favColor: "#e05d5d",
     hobbies: ["Gym", "Hiking", "Running", "Music"],
-    position: { x: 30, y: 70 }
+    position: { x: 25, y: 65 }
   },
   {
     id: "star4",

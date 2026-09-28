@@ -1,54 +1,53 @@
-# CPSC 581 A1 — Team Constellation
+# Team Constellation — CPSC 581 Assignment 1
 
-An interactive constellation that introduces four team members through their interests, sleep rhythms, and social energy. Each person is a star with a distinct colour. Selecting stars reveals what they share and how they differ.
+An interactive night sky introducing four team members. Each illustrated star represents a person; exploring and connecting stars reveals their hobbies, sleep preferences, and personalities.
 
-## Run the project
+## Run locally
 
-1. Keep `index.html`, `style.css`, `data.js`, `script.js`, `campfire.js`, and the SVG scene files together in one folder.
-2. Open `index.html` in a browser. No installation, build step, or external packages are required.
-3. Alternatively, open the folder in VS Code and use Live Server if you prefer a local development server.
+Download or extract the project, keeping `index.html`, `style.css`, `data.js`, `script.js`, and the `images/` folder together. Open `index.html` in a modern browser. No installation, build command, account, or external package is required. You can also open the folder with VS Code Live Server.
 
-**Use the exact filenames shown below.** If your downloaded files have suffixes such as `index(9).html` or `data(9).js`, rename them to `index.html` and `data.js` inside the project folder. The names referenced in `index.html` and `script.js` must match.
+## Interactions
 
-## Explore
-
-| Action | Result |
+| Action | What happens |
 | --- | --- |
-| Hover over a star or focus it with the keyboard | The person's name and hobbies appear beside the star, with a gradually strengthening glow. |
-| Click a star | It stays selected and its background stars light up in its chosen colour. Click again to deselect it. |
-| Select two stars | A line connects them. Shared hobbies are highlighted; the caption describes a similarity and a difference. An illustrated scene appears for each supported shared hobby. |
-| Select three or four stars | Only hobbies shared by **every** selected person are highlighted and illustrated. |
-| Drag the sun or moon toward the centre, or click it | Stars for early birds or night owls brighten and reveal their names. Click the active control again to clear it. |
-| Drag the campfire toward the centre, or click it | Stars move to show social distance: extrovert closest with more sparks, ambivert a little farther with fewer sparks, introverts farthest away. Click again or press Escape to restore their positions. |
+| Hover over a star or focus it using Tab | The person's name and illustrated hobbies appear around the star, connected by straight lines. Its picture and glow change. |
+| Click a star, or press Enter/Space while it is focused | Selects that person. Their star stays lit and their hobbies remain visible. Activate it again to deselect. |
+| Select two stars | A dotted line joins them. Any shared hobbies grow, glow, and wiggle; a small panel names those hobbies and shows each person's sleep preference and personality. |
+| Select three or four stars | Only hobbies common to **every** selected person receive the shared-hobby highlight. The panel lists those common hobbies, if any. |
+| Drag the sun or moon to the middle of the sky | Every star switches to its assigned morning or night picture. Morning people respond to the sun; night people respond to the moon by growing and shining. |
+| Click the sun or moon, or activate it with the keyboard | Activates that mode without dragging. Activate the same control again or press Escape to clear it. |
 
-The controls can be reached with Tab and activated with Enter or Space. Escape clears an active sun, moon, or campfire interaction.
+For example, Ishika and Yasmin share music and running, so both hobbies highlight when they are selected together. Ishika, Utaha, and Yasmin share music; when all three are selected, only music highlights.
 
-## The team
+## Team data
 
-| Member | Star colour | Social energy | Sleep rhythm | Hobbies |
-| --- | --- | --- | --- | --- |
-| Ishika | Gold | Extrovert | Night owl | Music, drawing, running |
-| Utaha | Blue | Introvert | Early bird | Music, crocheting, hiking, swimming |
-| Yasmin | Red | Ambivert | Early bird | Gym, hiking, running, music |
-| Linden | Green | Introvert | Night owl | Pickleball, reading, drawing |
+| Member | Personality | Sleep preference | Hobbies |
+| --- | --- | --- | --- |
+| Ishika | Extrovert | Night owl | Music, drawing, running |
+| Utaha | Introvert | Early bird | Music, crocheting, hiking, swimming |
+| Yasmin | Ambivert | Early bird | Gym, hiking, running, music |
+| Linden | Introvert | Night owl | Pickleball, reading, drawing |
 
-For example, Ishika and Yasmin share **music and running**, so both illustrated scenes appear when only those two stars are selected. Ishika, Utaha, and Yasmin share **music**; when all three are selected, only the music scene appears. The illustrated hobby scenes currently cover music, running, hiking, and drawing. Other hobbies appear in each person's profile and can be highlighted as shared interests without an illustrated scene.
+## Project files
 
-## Files
-
-| File | Purpose |
+| Path | Purpose |
 | --- | --- |
-| `index.html` | Page structure, sky artwork, and sun, moon, and campfire controls. |
-| `style.css` | Layout, stars, captions, animation, and control styling. |
-| `data.js` | Team names, colours, hobbies, sleep rhythms, social energy, and starting star positions. |
-| `script.js` | Star selection, hover details, shared hobby scenes, captions, and sun/moon behaviour. |
-| `campfire.js` | Campfire dragging, social distance positions, sparks, and resetting star positions. |
-| `music-cat.svg`, `running-scene1.svg`, `hiking-scene.svg`, `drawing-scene.svg` | Artwork referenced by the shared hobby scenes. |
-| `running-scene.svg` | Additional running artwork included in the project; the current scene uses `running-scene1.svg`. |
+| `index.html` | Sky layout, background artwork, and sun/moon controls. |
+| `style.css` | Layout, visual states, transitions, and animations. |
+| `data.js` | Member names, hobbies, personality, sleep preference, colour, and initial star position. |
+| `script.js` | Star interactions, hobby artwork, connections, comparison panel, and sun/moon logic. |
+| `images/` | Illustrated star pictures. Keep this folder next to `index.html`. |
 | `LICENSE` | MIT license. |
 
-To adjust each star's original location, change its `position.x` and `position.y` percentages in `data.js`. To adjust its position **around the campfire**, change the `positions` values in `campfire.js`.
+The ZIP also contains `drawing-scene.svg`, `hiking-scene.svg`, `music-cat.svg`, `running-scene.svg`, and `running-scene1.svg`. They are included project artwork; the current two-star comparison does not launch those scene animations. Some hobby pictures are embedded directly in `script.js`.
+
+## Change the content
+
+- Edit a member's hobbies, personality, sleep preference, or `position` in `data.js`.
+- Edit `starPictures` near the top of `script.js` to choose each member's initial, hover, and selected pictures. Filenames must exist in `images/`.
+- Edit `timePictures` beside it to choose a separate morning and night picture for **each** member.
+- Adjust `hobbyPositions` in `script.js` to move an individual hobby around its star without moving the star itself.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT. See [LICENSE](LICENSE).

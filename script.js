@@ -14,6 +14,15 @@ const starPictures = {
   Utaha: { initial: "uta2.png", hover: "ishika3.png", clicked: "ishika2.png" },
   Linden: { initial: "linden3.png", hover: "ishika3.png", clicked: "ishika2.png" }
 };
+// Choose one sun picture and one moon picture for EVERY star.
+// Put each image in images/. These choices are independent of initial/hover/clicked.
+// Empty strings keep the usual star picture until you choose one.
+const timePictures = {
+  Ishika: { morning: "uta1.png", night: "ishika1.png" },
+  Utaha:  { morning: "ishika1.png", night: "uta1.png" },
+  Yasmin: { morning: "ishika1.png", night: "uta1.png" },
+  Linden: { morning: "uta1.png", night: "ishika1.png" }
+};
 function attachStarArt(el, star) {
   el.classList.add("illustrated-star", `star-art-${star.id}`);
   const pictures = starPictures[star.name];
@@ -144,7 +153,7 @@ function handleHoverStart(star) {
       el.classList.remove("hover-glow-faint");
       el.classList.add("hover-glow-bright");
     }, star.hoverTime);
-  }, 1000);
+  }, 100);
 }
 
 function handleHoverEnd(star) {
@@ -297,42 +306,10 @@ function updatePairCaption() {
     });
   });
 
-  const active = ["running", "gym", "hiking", "swimming", "pickleball"];
-  const aActivity = a.hobbies.find(hobby => active.includes(hobby.toLowerCase()));
-  const bActivity = b.hobbies.find(hobby => active.includes(hobby.toLowerCase()));
-  let similarity;
-  if (sharedHobbies.length) similarity = `Both enjoy ${sharedHobbies.join(" and ")}.`;
-  else if (a.sleep === b.sleep) similarity = `Both are ${a.sleep === "night owl" ? "night owls" : "early birds"}.`;
-  else if (a.personality === b.personality) similarity = `Both describe themselves as ${a.personality}.`;
-  else if (aActivity && bActivity) similarity = `Both enjoy active hobbies: ${a.name} lists ${aActivity}, and ${b.name} lists ${bActivity}.`;
-  else similarity = "Their listed interests show different sides of this team.";
-
-  let difference;
-  let contrastDetails;
-  if (a.sleep !== b.sleep) {
-    difference = `${a.name} is ${a.sleep === "night owl" ? "a" : "an"} ${a.sleep}, while ${b.name} is ${b.sleep === "night owl" ? "a" : "an"} ${b.sleep}.`;
-    contrastDetails = [a, b].map(star => ({
-      icon: star.sleep === "night owl" ? "☾" : "☀",
-      label: star.sleep === "night owl" ? "Night owl" : "Early bird"
-    }));
-  } else if (a.personality !== b.personality) {
-    difference = `${a.name} describes themselves as ${a.personality}, while ${b.name} describes themselves as ${b.personality}.`;
-    contrastDetails = [a, b].map(star => ({
-      icon: { extrovert: "✦", introvert: "❋", ambivert: "◈" }[star.personality] || "✧",
-      label: star.personality
-    }));
-  }
-  else {
-    const aUnique = a.hobbies.find(hobby => !b.hobbies.some(item => item.toLowerCase() === hobby.toLowerCase()));
-    const bUnique = b.hobbies.find(hobby => !a.hobbies.some(item => item.toLowerCase() === hobby.toLowerCase()));
-    difference = aUnique && bUnique
-      ? `${a.name} enjoys ${aUnique}, while ${b.name} enjoys ${bUnique}.`
-      : "They bring their own perspectives to the team.";
-    contrastDetails = [aUnique, bUnique].map(hobby => ({
-      icon: { music: "♫", drawing: "✎", running: "🏃", crocheting: "🧶", hiking: "🥾", swimming: "🏊", gym: "🏋", pickleball: "🏓", reading: "📖" }[hobby?.toLowerCase()] || "✦",
-      label: hobby || "Unique perspective"
-    }));
-  }
+  const hobbyText = sharedHobbies.length
+    ? `Both enjoy ${sharedHobbies.join(" and ")}.`
+    : "They do not have a listed hobby in common.";
+  const similarity = hobbyText;
 
   const title = document.createElement("strong");
   title.textContent = `${a.name} + ${b.name}`;
@@ -346,12 +323,12 @@ function updatePairCaption() {
     card.style.setProperty("--card-color", person.favColor);
     const symbol = document.createElement("span");
     symbol.className = "difference-symbol";
-    symbol.textContent = contrastDetails[index].icon;
+    symbol.textContent = person.sleep === "night owl" ? "☾" : "☀";
     const info = document.createElement("span");
     const name = document.createElement("b");
     name.textContent = person.name;
     const detail = document.createElement("small");
-    detail.textContent = contrastDetails[index].label;
+    detail.textContent = `${person.sleep === "night owl" ? "Night owl" : "Early bird"} · ${person.personality}`;
     info.append(name, detail);
     card.append(symbol, info);
     comparison.appendChild(card);
@@ -365,7 +342,7 @@ function updatePairCaption() {
   });
   const contrast = document.createElement("p");
   contrast.className = "screen-reader-only";
-  contrast.textContent = difference;
+  contrast.textContent = `${a.name}: ${a.hobbies.join(", ")}. ${b.name}: ${b.hobbies.join(", ")}.`;
   caption.replaceChildren(title, common, comparison, contrast);
   caption.classList.add("visible");
 }
@@ -392,7 +369,7 @@ const hobbyPositions = {
   },
   star3: { // Yasmin
     gym: { x: 200, y: 190 }, hiking: { x: 20, y: 300 },
-    running: { x: -180, y: 200 }, music: { x: -170, y: -80 }
+    running: { x: -180, y: 200 }, music: { x: -130, y: -80 }
   },
   star4: { // Linden
     pickleball: { x: 0, y: 200 }, reading: { x: 80, y: 300 }, drawing: { x: 80, y: 50 }
@@ -464,97 +441,146 @@ window.addEventListener("resize", drawConstellation);
 renderStars();
 
 
-// The sun and moon are draggable, and can also be activated with a click or Enter.
+// The sun and moon are fixed targets. Only the four star buttons are interactive.
 function setupTimeControls() {
   const container = document.getElementById("time-controls");
-  const target = document.getElementById("time-target");
   const announcement = document.getElementById("time-announcement");
-  const controls = [document.getElementById("sun-control"), document.getElementById("moon-control")];
-  let active = null;
+  const originalArt = new Map();
+  document.getElementById("time-target")?.remove();
+  stars.forEach(star => ["morning", "night"].forEach(mode => {
+    const filename = timePictures[star.name]?.[mode];
+    if (filename) { const picture = new Image(); picture.src = `images/${filename}`; }
+  }));
 
-  function setMode(mode) {
-    active = mode;
-    controls.forEach(control => {
-      const chosen = control.id === (mode === "morning" ? "sun-control" : "moon-control") && mode !== null;
-      control.setAttribute("aria-pressed", String(chosen));
-      control.style.left = chosen ? `${window.innerWidth / 2 - control.offsetWidth / 2}px` : "";
-      control.style.top = chosen ? `${window.innerHeight * .43 - control.offsetHeight / 2}px` : "";
-      if (!chosen) control.style.right = "";
-      else control.style.right = "auto";
-    });
-    paint(mode);
+  // Convert the old sun/moon buttons into decorative drop targets.
+  const targets = {};
+  for (const [mode, id, label] of [
+    ["morning", "sun-control", "Sun: drag a star here"],
+    ["night", "moon-control", "Moon: drag a star here"]
+  ]) {
+    const old = document.getElementById(id);
+    const target = document.createElement("div");
+    target.id = id;
+    target.className = old.className;
+    target.setAttribute("role", "img");
+    target.setAttribute("aria-label", label);
+    target.append(...old.childNodes);
+    old.replaceWith(target);
+    targets[mode] = target;
   }
 
-  function paint(mode) {
-    controls.forEach(control => control.setAttribute("aria-pressed", String(control.id === (mode === "morning" ? "sun-control" : "moon-control") && mode !== null)));
-    stars.forEach(star => {
-      const el = document.getElementById(star.id);
-      const matches = mode === "morning" ? star.sleep === "early bird" : mode === "night" && star.sleep === "night owl";
-      el.classList.toggle("time-match", matches);
-      if (matches) {
-        el.style.setProperty("--time-color", mode === "morning" ? "#ffe092" : "#bed4ff");
-        el.dataset.timeLabel = mode === "morning" ? "☀ Morning person" : "☾ Night person";
-      } else {
-        el.style.removeProperty("--time-color");
-        delete el.dataset.timeLabel;
-      }
+  function setStarMode(star, mode) {
+    const el = document.getElementById(star.id);
+    if (!originalArt.has(star.id)) {
+      originalArt.set(star.id, [1, 2, 3, 4].map(index => el.style.getPropertyValue(`--art-${index}`)));
+    }
+    const matches = mode && (mode === "morning" ? star.sleep === "early bird" : star.sleep === "night owl");
+    const filename = mode && timePictures[star.name]?.[mode];
+    el.classList.toggle("time-match", Boolean(matches));
+    el.classList.toggle("time-art-active", Boolean(filename));
+    el.classList.toggle("time-other", Boolean(mode && !matches));
+    if (filename) el.style.setProperty("--time-art", `url("images/${filename}")`);
+    else el.style.removeProperty("--time-art");
+    // Apply the chosen picture to every artwork state. Hover and selection
+    // therefore cannot replace it with an older picture during a drag.
+    [1, 2, 3, 4].forEach((index) => {
+      el.style.setProperty(`--art-${index}`, filename
+        ? `url("images/${filename}")`
+        : originalArt.get(star.id)[index - 1]);
     });
-    const names = stars.filter(star => mode === "morning" ? star.sleep === "early bird" : mode === "night" && star.sleep === "night owl").map(star => star.name);
-    announcement.textContent = mode ? `${mode === "morning" ? "Morning people" : "Night people"}: ${names.join(" and ")}.` : "Morning and night highlights cleared.";
+    if (matches) {
+      el.style.setProperty("--time-color", mode === "morning" ? "#ffe092" : "#bed4ff");
+      el.dataset.timeLabel = mode === "morning" ? "☀ Morning person" : "☾ Night person";
+    } else {
+      el.style.removeProperty("--time-color");
+      delete el.dataset.timeLabel;
+    }
+    el.dataset.timeMode = mode || "";
+    announcement.textContent = mode
+      ? `${star.name} at the ${mode === "morning" ? "sun" : "moon"}: ${matches ? "this is their time" : "this is not their usual time"}.`
+      : `${star.name} returned to their usual picture.`;
   }
 
-  controls.forEach(control => {
-    const mode = control.id === "sun-control" ? "morning" : "night";
-    let origin = null;
+  function targetAt(x, y, starElement) {
+    const starBox = starElement.getBoundingClientRect();
+    const starX = starBox.left + starBox.width / 2;
+    const starY = starBox.top + starBox.height / 2;
+    let nearest = null;
+    let nearestDistance = 155;
+    for (const mode of ["morning", "night"]) {
+      const box = targets[mode].getBoundingClientRect();
+      const targetX = box.left + box.width / 2;
+      const targetY = box.top + box.height / 2;
+      // A generous proximity zone triggers before the pictures touch.
+      const distance = Math.hypot(starX - targetX, starY - targetY);
+      if (distance < nearestDistance) { nearest = mode; nearestDistance = distance; }
+    }
+    return nearest;
+  }
+
+  stars.forEach(star => {
+    const el = document.getElementById(star.id);
+    el.setAttribute("aria-label", `Explore ${star.name}; drag to sun or moon, or press S or M when focused`);
+    let drag = null;
     let suppressClick = false;
-    control.addEventListener("pointerdown", event => {
+    el.addEventListener("pointerdown", event => {
       if (event.button !== 0) return;
-      const box = control.getBoundingClientRect();
-      origin = { x: event.clientX, y: event.clientY, left: box.left, top: box.top, moved: false };
-      control.setPointerCapture(event.pointerId);
+      drag = { x: event.clientX, y: event.clientY, left: el.style.left, top: el.style.top,
+        moved: false, previousMode: el.dataset.timeMode || null, preview: null };
+      el.setPointerCapture(event.pointerId);
     });
-    control.addEventListener("pointermove", event => {
-      if (!origin) return;
-      if (!origin.moved && Math.hypot(event.clientX - origin.x, event.clientY - origin.y) < 5) return;
-      origin.moved = true;
-      control.classList.add("dragging");
-      container.classList.add("dragging");
-      control.style.right = "auto";
-      control.style.left = `${Math.max(0, Math.min(window.innerWidth - control.offsetWidth, origin.left + event.clientX - origin.x))}px`;
-      control.style.top = `${Math.max(0, Math.min(window.innerHeight - control.offsetHeight, origin.top + event.clientY - origin.y))}px`;
-      const box = target.getBoundingClientRect();
-      const inTarget = event.clientX >= box.left - 55 && event.clientX <= box.right + 55 && event.clientY >= box.top - 65 && event.clientY <= box.bottom + 65;
-      container.classList.toggle("in-target", inTarget);
-      paint(inTarget ? mode : null);
+    el.addEventListener("pointermove", event => {
+      if (!drag) return;
+      const dx = event.clientX - drag.x;
+      const dy = event.clientY - drag.y;
+      if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+      drag.moved = true;
+      el.classList.add("star-dragging");
+      document.body.classList.add("dragging-member");
+      el.style.left = `calc(${drag.left} + ${dx}px)`;
+      el.style.top = `calc(${drag.top} + ${dy}px)`;
+      const over = targetAt(event.clientX, event.clientY, el);
+      for (const mode of ["morning", "night"]) targets[mode].classList.toggle("star-over-target", mode === over);
+      if (over !== drag.preview) {
+        drag.preview = over;
+        setStarMode(star, over || drag.previousMode);
+      }
+      drawConstellation();
     });
-    control.addEventListener("pointerup", () => {
-      if (!origin) return;
-      const moved = origin.moved;
-      origin = null;
-      control.classList.remove("dragging");
-      container.classList.remove("dragging");
+    function finish(event, cancelled = false) {
+      if (!drag) return;
+      const moved = drag.moved;
+      const mode = !cancelled && moved ? targetAt(event.clientX, event.clientY, el) : null;
+      const previousMode = drag.previousMode;
+      el.style.left = drag.left;
+      el.style.top = drag.top;
+      el.classList.remove("star-dragging");
+      document.body.classList.remove("dragging-member");
+      for (const target of Object.values(targets)) target.classList.remove("star-over-target");
+      drag = null;
+      drawConstellation();
       if (moved) {
         suppressClick = true;
-        const inTarget = container.classList.contains("in-target");
-        setMode(inTarget ? mode : null);
+        setTimeout(() => { suppressClick = false; }, 0);
+        setStarMode(star, mode || previousMode);
       }
-      container.classList.remove("in-target");
-    });
-    control.addEventListener("pointercancel", () => {
-      origin = null;
-      control.classList.remove("dragging");
-      container.classList.remove("dragging", "in-target");
-      setMode(active);
-    });
-    control.addEventListener("click", () => {
-      if (suppressClick) { suppressClick = false; return; }
-      setMode(active === mode ? null : mode);
+    }
+    el.addEventListener("pointerup", event => finish(event));
+    el.addEventListener("pointercancel", event => finish(event, true));
+    el.addEventListener("click", event => {
+      if (!suppressClick) return;
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      suppressClick = false;
+    }, true);
+    el.addEventListener("keydown", event => {
+      const key = event.key.toLowerCase();
+      if (key === "s" || key === "m") {
+        event.preventDefault();
+        setStarMode(star, key === "s" ? "morning" : "night");
+      } else if (event.key === "Escape") setStarMode(star, null);
     });
   });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && active) setMode(null);
-  });
-  window.addEventListener("resize", () => { if (active) setMode(active); });
 }
 
 setupTimeControls();
