@@ -3,6 +3,28 @@ let selected = []; // array of selected star IDs
 const hoverTimers = {}; // store hover timers for each star
 const hoverState = {};
 
+// Components of the following code is generated using deepseek api
+const starSpritePrefixes = {
+  Ishika: "uta",
+  Utaha: "uta",
+  Yasmin: "uta",
+  Linden: "linden"
+};
+
+const SPRITE_STATE_COUNT = 4;
+
+function applyStarSprite(el, prefix) {
+  el.classList.add("star-image");
+
+  for (let state = 1; state <= SPRITE_STATE_COUNT; state++) {
+    const url = `images/${prefix}${state}.png`;
+    el.style.setProperty(`--star-frame-${state}`, `url("${url}")`);
+
+    const preload = new Image();
+    preload.src = url;
+  }
+}
+
 function renderStars() {
   const sky = document.getElementById("sky");
   const lines = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -20,7 +42,8 @@ function renderStars() {
     el.style.left = `${star.position.x}%`;
     el.style.top = `${star.position.y}%`;
     el.style.setProperty("--star-glow", star.favColor);
-    el.textContent = "★"; // TO DO: replace with star icon or image
+
+    applyStarSprite(el, starSpritePrefixes[star.name]);
 
     // user interactions
     el.addEventListener("mouseenter", () => handleHoverStart(star));
@@ -45,20 +68,20 @@ function handleHoverStart(star) {
 
   const el = document.getElementById(star.id);
   if (el) {
-    el.classList.remove("hover-glow-faint");
-    el.classList.remove("hover-glow-bright");
+    el.classList.remove("hover-first-state");
+    el.classList.remove("hover-final-state");
   }
 
   hoverTimers[star.id] = setTimeout(() => {
     if (!hoverState[star.id] || isSelected(star.id)) return;
     const el = document.getElementById(star.id);
-    el.classList.add("hover-glow-faint");
+    el.classList.add("hover-first-state");
 
     hoverTimers[star.id] = setTimeout(() => {
       if (!hoverState[star.id] || isSelected(star.id)) return;
       const el = document.getElementById(star.id);
-      el.classList.remove("hover-glow-faint");
-      el.classList.add("hover-glow-bright");
+      el.classList.remove("hover-first-state");
+      el.classList.add("hover-final-state");
     }, star.hoverTime);
   }, 1000);
 }
@@ -70,8 +93,8 @@ function handleHoverEnd(star) {
 
   const el = document.getElementById(star.id);
   if (!el) return;
-  el.classList.remove("hover-glow-faint");
-  el.classList.remove("hover-glow-bright");
+  el.classList.remove("hover-first-state");
+  el.classList.remove("hover-final-state");
 }
 
 function clearHover(starId) {
@@ -81,8 +104,8 @@ function clearHover(starId) {
 
   const el = document.getElementById(starId);
   if (!el) return;
-  el.classList.remove("hover-glow-faint");
-  el.classList.remove("hover-glow-bright");
+  el.classList.remove("hover-first-state");
+  el.classList.remove("hover-final-state");
 }
 
 // components of this code is generated using https://chat.openai.com/chat
