@@ -116,10 +116,9 @@ function handleClick(star) {
     selected = selected.filter(id => id !== star.id);
     document.getElementById(star.id).classList.remove("selected");
     document.getElementById(star.id).style.setProperty("--star-glow", "white");
-    clearHobbyIcons(star.id);
     toggleBgStars(star, false);
     drawConstellation();
-    updateSharedHobbyHighlights();
+    layoutAllHobbyIcons(); // removes this star's icons and re-validates everyone else's
     return;
   }
 
@@ -129,9 +128,8 @@ function handleClick(star) {
   el.classList.add("selected");
   el.style.setProperty("--star-glow", star.favColor);
   toggleBgStars(star, true);
-  showHobbyIcons(star);
   drawConstellation();
-  updateSharedHobbyHighlights();
+  layoutAllHobbyIcons(); // adds this star's icons and re-validates everyone else's
 }
 
 function drawConstellation() {
@@ -186,7 +184,7 @@ function sharedTraits(id1, id2) {
   ];
 }
 
-// Components of the following code is generated using Claude.ai
+// Components of the following logic is generated using Claude.ai
 const hobbyImages = {
   Ishika: { music: "music-ishika.png", drawing: "drawing-ishika.png", gym: "gym-ishika.png" },
   Utaha: { music: "music-uta.png", crocheting: "crochet.png", hiking: "hiking-uta.png", swimming: "swimming.png" },
@@ -204,41 +202,116 @@ function hobbyIcon(star, hobby) {
   return image;
 }
 
-const hobbyLayoutCache = {}; // cache for hobby icon positions
+// Decide hobby icon positions randomly while avoiding collisions with star-star lines
+const HOBBY_RADIUS_MIN = 110; // px, distance from star center to icon
+const HOBBY_RADIUS_RANGE = 10;
+const MIN_LINE_ANGLE = 0.7;      // rad (~35 deg): keep hobby lines off the same star's connecting lines
+const MIN_ICON_GAP = 0.6;        // rad (~35 deg): keep one star's own icons apart
+const MIN_LINE_CLEARANCE = 35;   // px: keep icons off OTHER stars' connecting lines
+const MAX_PLACEMENT_TRIES = 60; // tries max 60 angles before giving up 
 
-function getHobbyLayout(star) {
-  if (!hobbyLayoutCache[star.id]) {
-    const count = star.hobbies.length;
-    hobbyLayoutCache[star.id] = star.hobbies.map((_, i) => {
-      const baseAngle = (i / count) * 2 * Math.PI - Math.PI / 2;
-      const jitterRange = (2 * Math.PI / count) * 0.7; // stay mostly within its own "slice"
-      const angle = baseAngle + (Math.random() - 0.5) * jitterRange;
-      const radius = 100 + Math.random() * 10; 
-      return { angle, radius };
-    });
-  }
-  return hobbyLayoutCache[star.id];
+const hobbyLayoutCache = {}; // { starId: { hobbyName: { angle, radius } } }
+
+function ccw(a, b, c) {
+  return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
 }
 
-function showHobbyIcons(star) {
+function segmentsIntersect(a, b, c, d) {
+  return ccw(a, c, d) !== ccw(b, c, d) && ccw(a, b, c) !== ccw(a, b, d);
+}
+
+function distToSegment(p, a, b) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const lengthSq = dx * dx + dy * dy;
+  if (lengthSq === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / lengthSq));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+
+function angleDiff(a, b) {
+  const d = Math.abs(a - b) % (2 * Math.PI);
+  return d > Math.PI ? 2 * Math.PI - d : d;
+}
+
+// All star-star lines currently drawn by drawConstellation()
+function constellationSegments() {
+  const segs = [];
+  for (let i = 0; i < selected.length; i++) {
+    for (let j = i + 1; j < selected.length; j++) {
+      const a = starCenter(selected[i]);
+      const b = starCenter(selected[j]);
+      if (a && b) segs.push({ a, b, ids: [selected[i], selected[j]] });
+    }
+  }
+  return segs;
+}
+
+function isValidSpot(star, center, angle, radius, segs, takenAngles) {
+  const end = {
+    x: center.x + radius * Math.cos(angle),
+    y: center.y + radius * Math.sin(angle)
+  };
+
+  // keep this star's own icons apart from each other
+  if (takenAngles.some(t => angleDiff(angle, t) < MIN_ICON_GAP)) return false;
+
+  for (const seg of segs) {
+    if (seg.ids.includes(star.id)) {
+      const otherId = seg.ids.find(id => id !== star.id);
+      const otherCenter = starCenter(otherId);
+      if (!otherCenter) continue;
+      const lineAngle = Math.atan2(otherCenter.y - center.y, otherCenter.x - center.x);
+      if (angleDiff(angle, lineAngle) < MIN_LINE_ANGLE) return false;
+    } else {
+      // a line between two OTHER stars: check real intersection and icon clearance
+      if (segmentsIntersect(center, end, seg.a, seg.b)) return false;
+      if (distToSegment(end, seg.a, seg.b) < MIN_LINE_CLEARANCE) return false;
+    }
+  }
+
+  return true;
+}
+
+function findSpot(star, center, segs, takenAngles) {
+  for (let tries = 0; tries < MAX_PLACEMENT_TRIES; tries++) {
+    const angle = Math.random() * 2 * Math.PI;
+    const radius = HOBBY_RADIUS_MIN + Math.random() * HOBBY_RADIUS_RANGE;
+    if (isValidSpot(star, center, angle, radius, segs, takenAngles)) {
+      return { angle, radius };
+    }
+  }
+  return null;
+}
+
+function renderHobbyIcons(star, segs) {
   const sky = document.getElementById("sky");
   const svg = document.getElementById("hobby-lines");
   const center = starCenter(star.id);
   if (!sky || !svg || !center) return;
 
   svg.setAttribute("viewBox", `0 0 ${sky.clientWidth} ${sky.clientHeight}`);
-  const layout = getHobbyLayout(star);
 
-  // const radius = 70; // px, distance from star to each hobby icon
-  // const count = star.hobbies.length;
+  const cached = (hobbyLayoutCache[star.id] ||= {});
+  const takenAngles = [];
 
-  star.hobbies.forEach((hobby, i) => {
-    const { angle, radius } = layout[i];
-    const iconX = center.x + radius * Math.cos(angle);
-    const iconY = center.y + radius * Math.sin(angle);
-
+  star.hobbies.forEach(hobby => {
     const icon = hobbyIcon(star, hobby);
     if (!icon) return;
+
+    // Reuse the cached position unless it's missing or now collides with a new line
+    let spot = cached[hobby];
+    if (!spot || !isValidSpot(star, center, spot.angle, spot.radius, segs, takenAngles)) {
+      spot = findSpot(star, center, segs, takenAngles) || spot || {
+        angle: Math.random() * 2 * Math.PI,
+        radius: HOBBY_RADIUS_MIN
+      };
+      cached[hobby] = spot;
+    }
+    takenAngles.push(spot.angle);
+
+    const iconX = center.x + spot.radius * Math.cos(spot.angle);
+    const iconY = center.y + spot.radius * Math.sin(spot.angle);
 
     icon.classList.add("hobby-icon");
     icon.dataset.starId = star.id;
@@ -260,10 +333,19 @@ function showHobbyIcons(star) {
   });
 }
 
-function clearHobbyIcons(starId) {
-  document.querySelectorAll(`.hobby-icon[data-star-id="${starId}"]`).forEach(el => el.remove());
-  document.querySelectorAll(`.hobby-line[data-star-id="${starId}"]`).forEach(el => el.remove());
+// Rebuilds every selected star's hobby icons. Called after any selection change (and on resize)
+function layoutAllHobbyIcons() {
+  document.querySelectorAll(".hobby-icon, .hobby-line").forEach(el => el.remove());
+
+  const segs = constellationSegments();
+  selected.forEach(id => {
+    const star = stars.find(s => s.id === id);
+    if (star) renderHobbyIcons(star, segs);
+  });
+
+  updateSharedHobbyHighlights();
 }
+
 
 function sharedSelectedHobbies() {
   if (selected.length < 2) return [];
@@ -291,10 +373,9 @@ function toggleBgStars(star, show) {
   }
 }
 
-function blendColors(hex1, hex2) {
-  // simple midpoint RGB blend — fill in when you get to bg color logic
-}
-
-window.addEventListener("resize", drawConstellation);
+window.addEventListener("resize", () => {
+  drawConstellation();
+  layoutAllHobbyIcons();
+});
 
 renderStars();
