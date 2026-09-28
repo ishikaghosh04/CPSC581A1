@@ -187,11 +187,22 @@ function sharedTraits(id1, id2) {
 }
 
 // Components of the following code is generated using Claude.ai
-// TODO: replace with drawings eg. music: "asset/hobbies/music.png", etc.
-const hobbyEmoji = {
-  music: "🎵", drawing: "🎨", running: "🏃", crocheting: "🧶",
-  hiking: "🥾", swimming: "🏊", gym: "🏋️", pickleball: "🏓", reading: "📖"
+const hobbyImages = {
+  Ishika: { music: "music-ishika.png", drawing: "drawing-ishika.png", gym: "gym-ishika.png" },
+  Utaha: { music: "music-uta.png", crocheting: "crochet.png", hiking: "hiking-uta.png", swimming: "swimming.png" },
+  Yasmin: { gym: "gym-yasmin.png", hiking: "hiking-yasmin.png" },
+  Linden: { pickleball: "pickleball.png", reading: "reading.png", drawing: "drawing-linden.png" }
 };
+
+function hobbyIcon(star, hobby) {
+  const file = (hobbyImages[star.name] || {})[hobby];
+  if (!file) return null;
+
+  const image = document.createElement("img");
+  image.src = `images/hobbies/${file}`;
+  image.alt = hobby;
+  return image;
+}
 
 const hobbyLayoutCache = {}; // cache for hobby icon positions
 
@@ -202,7 +213,7 @@ function getHobbyLayout(star) {
       const baseAngle = (i / count) * 2 * Math.PI - Math.PI / 2;
       const jitterRange = (2 * Math.PI / count) * 0.7; // stay mostly within its own "slice"
       const angle = baseAngle + (Math.random() - 0.5) * jitterRange;
-      const radius = 100 + Math.random() * 30; // 55–85px from the star
+      const radius = 100 + Math.random() * 10; 
       return { angle, radius };
     });
   }
@@ -226,12 +237,13 @@ function showHobbyIcons(star) {
     const iconX = center.x + radius * Math.cos(angle);
     const iconY = center.y + radius * Math.sin(angle);
 
-    const icon = document.createElement("div");
+    const icon = hobbyIcon(star, hobby);
+    if (!icon) return;
+
     icon.classList.add("hobby-icon");
     icon.dataset.starId = star.id;
     icon.dataset.hobby = hobby.toLowerCase();
     icon.title = hobby;
-    icon.textContent = hobbyEmoji[hobby] || "☆";
     icon.style.left = `${iconX}px`;
     icon.style.top = `${iconY}px`;
     sky.appendChild(icon);

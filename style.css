@@ -42,7 +42,7 @@ body {
 #member2-bg-stars,
 #member3-bg-stars,
 #member4-bg-stars {
-  z-index: 3;
+  z-index: 1;
 }
 
 .member-bg-stars {
@@ -122,9 +122,15 @@ body {
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  width: 24px;
-  opacity: 0.3;
+  width: 55px;
+  height: 55px;
+  opacity: 0.8;
   transition: opacity 0.3s;
+  z-index: 2;
+}
+
+img.hobby-icon {
+  object-fit: contain;
 }
 
 .hobby-icon.shared-hobby {

@@ -6,7 +6,7 @@ const stars = [
     sleep: "night owl",
     hoverTime: 3000,
     favColor: "#e8cd7c",
-    hobbies: ["music", "drawing", "running"],
+    hobbies: ["music", "drawing", "gym"],
     position: { x: 20, y: 25 }
   },
   {
@@ -36,7 +36,7 @@ const stars = [
     sleep: "night owl",
     hoverTime: 5000,
     favColor: "#70c09a",
-    hobbies: ["pickleball", "reading"],
+    hobbies: ["pickleball", "reading", "drawing"],
     position: { x: 75, y: 70 }
   }
 ];
