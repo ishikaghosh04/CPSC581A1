@@ -293,80 +293,6 @@ body {
   #pair-caption { transition: none; }
 }
 
-/* A playful image appears when two selected members share music. */
-.shared-reveal {
-  position: fixed;
-  z-index: 7;
-  width: clamp(90px, 11vw, 130px);
-  height: clamp(90px, 11vw, 130px);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  border-radius: 50%;
-  background: radial-gradient(circle, #efc5ff77 8%, #ffd58c25 50%, transparent 72%);
-  filter: drop-shadow(0 0 18px #ffe3aa77);
-  animation: music-pop .7s cubic-bezier(.18, 1.7, .36, 1) both;
-}
-.shared-reveal img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  animation: cat-groove 2.1s ease-in-out .7s infinite;
-}
-.music-note {
-  position: absolute;
-  top: 38%;
-  color: #ffe498;
-  font: bold 44px/1 system-ui, sans-serif;
-  text-shadow: 0 0 16px #ffc7f2;
-  animation: note-dance 1.6s ease-in-out .7s infinite alternate;
-}
-.music-note.left { left: -13%; }
-.music-note.right { right: -13%; animation-delay: 1s; color: #85dfff; }
-.music-label {
-  display: block;
-  width: max-content;
-  max-width: 180px;
-  margin: -12px auto 0;
-  padding: 6px 10px;
-  border: 1px solid #ffdfad;
-  border-radius: 20px;
-  background: #15172de6;
-  color: #fff2d8;
-  font: 700 11px/1.2 system-ui, sans-serif;
-  letter-spacing: .11em;
-  text-align: center;
-  box-shadow: 0 0 14px #eeadff77;
-}
-@keyframes music-pop {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(.15) rotate(-15deg); filter: brightness(3); }
-  55% { opacity: 1; transform: translate(-50%, -50%) scale(1.16) rotate(5deg); }
-  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
-}
-@keyframes cat-groove { 50% { transform: translateY(-8px) rotate(3deg); } }
-@keyframes note-dance { to { transform: translateY(-24px) rotate(16deg); opacity: .55; } }
-@media (prefers-reduced-motion: reduce) {
-  .shared-reveal, .shared-reveal img, .music-note { animation: none; }
-}
-
-/* Give each shared hobby its own colour while using the same pop animation. */
-.shared-reveal.scene-hiking {
-  background: radial-gradient(circle, #8fe8b277 8%, #b5edc02d 50%, transparent 72%);
-  filter: drop-shadow(0 0 18px #80e9bd88);
-}
-.shared-reveal.scene-running {
-  background: radial-gradient(circle, #ffd08488 8%, #ff87822d 50%, transparent 72%);
-  filter: drop-shadow(0 0 18px #ffa88899);
-}
-.shared-reveal.scene-drawing {
-  background: radial-gradient(circle, #ffb4dc66 8%, #b7d9ff33 50%, transparent 72%);
-  filter: drop-shadow(0 0 18px #f7bcf588);
-}
-.scene-drawing .music-label { border-color: #f3bee9; color: #ffe9f8; }
-.scene-drawing .music-note { color: #f7caee; }
-.scene-hiking .music-label { border-color: #9bf0c4; color: #dbffeb; }
-.scene-running .music-label { border-color: #ffbd91; color: #fff2dd; }
-.scene-hiking .music-note { color: #adffd4; }
-.scene-running .music-note { color: #ffcd92; }
 /* Drag the sun or moon into the sky to reveal the team's rhythms. */
 #time-controls { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
 .time-control {
@@ -711,3 +637,124 @@ body {
 .star.illustrated-star:is(:hover, :focus-visible, .selected, .time-match, .campfire-star)::before {
   filter: var(--art-tint, none);
 }
+
+
+/* Hand-drawn hobby pictures sit beside the existing readable labels. */
+.hobby-tag,
+.star.selected .hobby-tag,
+.star:is(:hover, :focus-visible) .hobby-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.hobby-picture {
+  display: block; width: 26px; height: 26px; flex: 0 0 26px;
+  object-fit: contain;
+}
+@media (max-width: 600px) {
+  .hobby-picture { width: 21px; height: 21px; flex-basis: 21px; }
+}
+
+/* Hobby sketches and names float freely beside the selected star. */
+.hobby-tag,
+.star.selected .hobby-tag,
+.star:is(:hover, :focus-visible) .hobby-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #fff;
+  font-size: 13px;
+}
+.hobby-tag.shared {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #ffe6a6;
+  text-shadow: 0 0 10px #ffd478, 0 0 18px #ffd478;
+}
+.hobby-tag.shared .hobby-picture {
+  filter: drop-shadow(0 0 7px #ffd478);
+}
+.hobby-picture { width: 30px; height: 30px; flex-basis: 30px; }
+@media (max-width: 600px) {
+  .hobby-picture { width: 24px; height: 24px; flex-basis: 24px; }
+}
+
+/* Utaha-style rays with an illustration and a readable name at each end. */
+#hobby-lines {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 1; overflow: visible;
+}
+.hobby-connector {
+  stroke: rgba(224, 237, 255, .65); stroke-width: 1.4;
+  stroke-dasharray: none;
+}
+/* Dotted connections between members; hobby rays above remain solid. */
+#constellation-lines .connecting-line {
+  stroke: #c5edf2;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1 10;
+  stroke-dashoffset: 0;
+  animation: none;
+}
+/* The original inline hobby list is only a data source for the orbit layout. */
+.star .star-detail { display: none !important; }
+.orbit-hobby {
+  position: absolute; z-index: 4;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; width: 106px; padding: 0;
+  transform: translate(-50%, -50%);
+  background: none; border: 0; box-shadow: none;
+  color: white; font: 600 12px/1.15 system-ui, sans-serif;
+  text-align: center; text-shadow: 0 1px 6px #040815, 0 0 9px #040815;
+  pointer-events: none;
+  transition: transform .22s ease, text-shadow .22s ease;
+}
+.orbit-hobby .hobby-picture {
+  width: 65px; height: 65px; flex: none; object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,.3));
+}
+.orbit-hobby.shared {
+  z-index: 6;
+  transform: translate(-50%, -50%) scale(1.5);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff2c9;
+  text-shadow: 0 0 9px #ffd478, 0 0 18px #ffd478;
+}
+.orbit-hobby.shared .hobby-picture {
+  filter: drop-shadow(0 0 14px #ffd478);
+  transform-origin: center 80%;
+  animation: shared-hobby-jiggle 1.25s ease-in-out infinite;
+}
+@keyframes shared-hobby-jiggle {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  18% { transform: translateY(-3px) rotate(-6deg); }
+  36% { transform: translateY(1px) rotate(5deg); }
+  54% { transform: translateY(-2px) rotate(-4deg); }
+  72% { transform: translateY(1px) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-hobby.shared .hobby-picture { animation: none; }
+}
+/* Yasmin uses the same music sketch as Utaha, tinted to her pink colour. */
+.orbit-hobby[data-star-id="star3"][data-hobby="music"] .hobby-picture {
+  filter: hue-rotate(140deg) saturate(1.7) drop-shadow(0 0 9px #ff8ba7);
+}
+.orbit-hobby[data-star-id="star3"][data-hobby="music"].shared .hobby-picture {
+  filter: hue-rotate(140deg) saturate(1.7) drop-shadow(0 0 16px #ff8ba7);
+}
+@media (max-width: 600px) {
+  .orbit-hobby { width: 84px; font-size: 11px; }
+  .orbit-hobby .hobby-picture { width: 48px; height: 48px; }
+  .orbit-hobby.shared { font-size: 12px; }
+}
+
+/* Selecting multiple stars updates the comparison without playing a scene. */
+#pair-caption { transition: none; }
+.difference-card, .difference-link { animation: none; }
