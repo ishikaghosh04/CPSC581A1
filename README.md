@@ -1,25 +1,31 @@
 # Team Constellation — CPSC 581 Assignment 1
 
-An interactive night sky introducing four team members. Each illustrated star represents a person; exploring and connecting stars reveals their hobbies, sleep preferences, and personalities.
+Team Constellation is an interactive night sky introducing Ishika, Utaha, Yasmin, and Linden. Each illustrated star represents one person. Explore stars to see hobbies, select several to find connections, and drag a star toward the fixed sun or moon to reveal its morning or night reaction.
 
-## Run locally
+## Run the application
 
-Download or extract the project, keeping `index.html`, `style.css`, `data.js`, `script.js`, and the `images/` folder together. Open `index.html` in a modern browser. No installation, build command, account, or external package is required. You can also open the folder with VS Code Live Server.
+1. Download or extract the complete project ZIP.
+2. Keep `index.html`, `style.css`, `data.js`, `script.js`, and the `images/` folder in the same project folder. Keep `images/hobbies/` inside `images/`.
+3. Open `index.html` in a modern browser. VS Code Live Server also works.
 
-## Interactions
+No build step, package installation, account, or server-side code is required.
 
-| Action | What happens |
+## Explore the sky
+
+| Action | Result |
 | --- | --- |
-| Hover over a star or focus it using Tab | The person's name and illustrated hobbies appear around the star, connected by straight lines. Its picture and glow change. |
-| Click a star, or press Enter/Space while it is focused | Selects that person. Their star stays lit and their hobbies remain visible. Activate it again to deselect. |
-| Select two stars | A dotted line joins them. Any shared hobbies grow, glow, and wiggle; a small panel names those hobbies and shows each person's sleep preference and personality. |
-| Select three or four stars | Only hobbies common to **every** selected person receive the shared-hobby highlight. The panel lists those common hobbies, if any. |
-| Drag the sun or moon to the middle of the sky | Every star switches to its assigned morning or night picture. Morning people respond to the sun; night people respond to the moon by growing and shining. |
-| Click the sun or moon, or activate it with the keyboard | Activates that mode without dragging. Activate the same control again or press Escape to clear it. |
+| Hover over a star or focus it with Tab | The person's name appears, and illustrated, labelled hobbies appear around the star with straight connecting lines. After one second, the star shows its first hover picture. If you continue hovering, it shows a second picture after that person's `hoverTime`. |
+| Click a star, or use Enter/Space when it is focused | The person stays selected with their hobbies visible. Click again to deselect. |
+| Select two stars | A dotted line connects them. Every hobby they share grows, glows, and wiggles. A caption names the shared hobbies and compares their sleep preferences and personalities. |
+| Select three or four stars | Only hobbies shared by **all** selected people are highlighted. The caption lists those hobbies, or says when no hobby is shared by everyone. |
+| Drag a star near the fixed sun or moon | While dragging, the star previews its assigned morning or night picture. Stars whose sleep preference matches that celestial body grow and glow, and a short label appears. On release, the star returns to its original position and picture, and the temporary glow clears. |
+| Focus a star and press S or M | Preview its sun or moon reaction without dragging. Press Escape to clear that preview. |
 
-For example, Ishika and Yasmin share music and running, so both hobbies highlight when they are selected together. Ishika, Utaha, and Yasmin share music; when all three are selected, only music highlights.
+The sun and moon stay at the top of the screen; the four member stars are the draggable controls. Dragging does not permanently move a star.
 
-## Team data
+**Examples:** Ishika and Yasmin share music and running, so both are highlighted when those two are selected. Ishika, Utaha, and Yasmin all share music; selecting all three highlights only music. The two-person caption also shows whether the people are early birds or night owls and lists their personality types.
+
+## Team members
 
 | Member | Personality | Sleep preference | Hobbies |
 | --- | --- | --- | --- |
@@ -32,22 +38,25 @@ For example, Ishika and Yasmin share music and running, so both hobbies highligh
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Sky layout, background artwork, and sun/moon controls. |
-| `style.css` | Layout, visual states, transitions, and animations. |
-| `data.js` | Member names, hobbies, personality, sleep preference, colour, and initial star position. |
-| `script.js` | Star interactions, hobby artwork, connections, comparison panel, and sun/moon logic. |
-| `images/` | Illustrated star pictures. Keep this folder next to `index.html`. |
-| `LICENSE` | MIT license. |
+| `index.html` | Page structure, sky artwork, fixed sun and moon, and status text. |
+| `style.css` | Layout, picture states, glow, transitions, hobby highlights, and responsive styling. |
+| `data.js` | Member data, hover times, star positions, and chosen glow colours. |
+| `script.js` | Star rendering, hover and selection, hobby layout, connections, captions, and star dragging. |
+| `images/*.png` | The illustrated star pictures. |
+| `images/hobbies/*.png` | Hobby illustrations. Ishika and Yasmin use the same `running.png`; CSS tints Ishika's displayed copy yellow while Yasmin's stays red. |
+| `music-cat.svg` | Included artwork; the current star connection interaction uses hobby highlighting instead of launching this scene. |
+| `LICENSE` | Project licence. |
 
-The ZIP also contains `drawing-scene.svg`, `hiking-scene.svg`, `music-cat.svg`, `running-scene.svg`, and `running-scene1.svg`. They are included project artwork; the current two-star comparison does not launch those scene animations. Some hobby pictures are embedded directly in `script.js`.
+Some hobby artwork is embedded in `script.js` as image data. The pictured hobbies are also mapped to files in `images/hobbies/`.
 
-## Change the content
+## Customize a member
 
-- Edit a member's hobbies, personality, sleep preference, or `position` in `data.js`.
-- Edit `starPictures` near the top of `script.js` to choose each member's initial, hover, and selected pictures. Filenames must exist in `images/`.
-- Edit `timePictures` beside it to choose a separate morning and night picture for **each** member.
-- Adjust `hobbyPositions` in `script.js` to move an individual hobby around its star without moving the star itself.
+- Edit the member's `hobbies`, `personality`, `sleep`, `hoverTime`, or percentage `position` in `data.js`.
+- Edit `starPictures` near the beginning of `script.js` to choose the initial, first-hover, second-hover, and clicked pictures. Yasmin currently uses `uta1.png` and `uta3.png` for her first and third frames, alongside `yasmin2.png` and `yasmin4.png`.
+- Edit `timePictures` in `script.js` to choose a morning and night preview picture for **each** person. These filenames refer to files directly inside `images/`.
+- Edit `hobbyPositions` in `script.js` to adjust individual hobby offsets without moving their star. Hobby picture filenames are in the `hobbyPictures` mapping.
+- Keep the illustrated star PNGs in `images/` and hobby PNGs in `images/hobbies/` when renaming or replacing artwork.
 
-## License
+## Licence
 
-MIT. See [LICENSE](LICENSE).
+See [LICENSE](LICENSE).
