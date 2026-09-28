@@ -279,13 +279,16 @@ function layoutAllHobbyIcons() {
     hobbies.forEach((hobby, index) => {
       const angle = direction - spread / 2 + (count === 1 ? 0 : index * spread / (count - 1));
       const offset = hobbyPositions[id]?.[hobby.toLowerCase()] || { x: 0, y: 0 };
-      const x = Math.max(53, Math.min(sky.clientWidth - 53, center.x + radius * Math.cos(angle) + offset.x));
-      const y = Math.max(78, Math.min(sky.clientHeight - 38, center.y + radius * Math.sin(angle) + offset.y));
-
       const item = hobbyLabel(star, hobby);
+      sky.appendChild(item); // appended first so its height can be measured below
+ 
+      // Keep the whole label inside the sky; it is roughly 81px tall.
+      const labelHalf = (item.offsetHeight || 81) / 2;
+      const x = Math.max(53, Math.min(sky.clientWidth - 53, center.x + radius * Math.cos(angle) + offset.x));
+      const y = Math.max(labelHalf + 8, Math.min(sky.clientHeight - labelHalf - 8, center.y + radius * Math.sin(angle) + offset.y));
+
       item.style.left = `${x}px`;
       item.style.top = `${y}px`;
-      sky.appendChild(item);
 
       const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
       line.setAttribute("class", "hobby-connector");
