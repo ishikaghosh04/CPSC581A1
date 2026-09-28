@@ -1,3 +1,4 @@
+/*components of the following code generated with deepseek api*/
 * {
   margin: 0;
   padding: 0;
@@ -147,21 +148,6 @@ body {
   }
 }
 
-.pulse {
-  animation: pulse 2s infinite;
-}
-
-.hobby-icon {
-  position: absolute;
-  width: 24px;
-  opacity: 0.3;
-  transition: opacity 0.3s;
-}
-
-.hobby-icon.shared {
-  opacity: 1;
-}
-
 #constellation-lines {
   position: absolute;
   top: 0;
@@ -169,15 +155,6 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 1;
-}
-
-.connecting-line {
-  fill: none;
-  stroke: rgba(163, 244, 255, 0.5);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 0.01 12.99;
   z-index: 1;
 }
 
@@ -280,21 +257,6 @@ body {
   }
 }
 
-/* A connecting thread grows from one selected star toward another. */
-.connecting-line {
-  stroke: #c5edf2;
-  stroke-width: 2.5;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: grow-line .7s ease-out forwards;
-}
-
-@keyframes grow-line {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 .hobby-tag.shared {
   background: #f7e4ad;
   color: #161826;
@@ -339,11 +301,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .connecting-line {
-    animation: none;
-    stroke-dashoffset: 0;
-  }
-
   #pair-caption {
     transition: none;
   }
@@ -381,15 +338,6 @@ body {
   font: inherit;
   margin-top: 3px;
   text-shadow: 0 0 8px #1b213d;
-}
-
-#moon-control {
-  left: auto;
-  right: 40%;
-}
-
-.time-control.dragging {
-  cursor: grabbing;
 }
 
 .time-control:focus-visible {
@@ -499,33 +447,6 @@ body {
   }
 }
 
-#time-target {
-  position: absolute;
-  left: 50%;
-  top: 43%;
-  transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  width: 190px;
-  height: 105px;
-  border: 2px dashed #cdd7f488;
-  border-radius: 55%;
-  color: #e5eaff;
-  background: #1b234c55;
-  font: 600 12px/1.3 system-ui, sans-serif;
-  text-align: center;
-  opacity: 0;
-  transition: opacity .2s, background .2s;
-}
-
-#time-controls.dragging #time-target {
-  opacity: 1;
-}
-
-#time-controls.in-target #time-target {
-  background: #f8e7a755;
-}
-
 .screen-reader-only {
   position: absolute;
   width: 1px;
@@ -554,21 +475,6 @@ body {
   color: var(--time-color);
   font: 700 11px/1 system-ui, sans-serif;
   text-shadow: 0 0 9px var(--time-color);
-}
-
-@media (max-width: 600px) {
-  #sun-control {
-    left: 14px;
-  }
-
-  #moon-control {
-    left: auto;
-    right: 14px;
-  }
-
-  .star.time-match {
-    scale: 1.23;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -603,11 +509,6 @@ body {
   flex-wrap: nowrap;
   align-items: flex-start;
   gap: 6px;
-}
-
-.star.selected .hobby-tag {
-  display: block;
-  font-size: 12px;
 }
 
 /* Ishika and Yasmin have their names and hobbies on the left. */
@@ -668,11 +569,6 @@ body {
   flex-wrap: nowrap;
   align-items: flex-start;
   gap: 6px;
-}
-
-.star:is(:hover, :focus-visible) .hobby-tag {
-  display: block;
-  font-size: 12px;
 }
 
 #star1:is(:hover, :focus-visible) .star-name,
@@ -765,14 +661,6 @@ body {
 
 #pair-caption {
   padding: 9px 12px;
-}
-
-.difference-comparison {
-  margin-top: 6px;
-}
-
-.difference-card {
-  padding: 4px 6px;
 }
 
 .difference-comparison {
@@ -887,237 +775,14 @@ body {
   }
 }
 
-/* Drag the animated campfire into the sky to show social distance. */
-#campfire-control {
-  position: fixed;
-  top: 16px;
-  left: calc(50% - 49px);
-  z-index: 10;
-  width: 98px;
-  height: 112px;
-  border: 0;
-  background: transparent;
-  color: #ffdeb2;
-  font: 600 12px/1.2 system-ui, sans-serif;
-  text-shadow: 0 1px 9px #121020;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-  transition: filter .2s;
-}
-
-#campfire-control.dragging {
-  cursor: grabbing;
-}
-
-#campfire-control:focus-visible {
-  outline: 3px solid white;
-  outline-offset: 3px;
-}
-
-#campfire-control small {
-  display: block;
-  margin-top: 3px;
-}
-
-#campfire-control.near-center,
-#campfire-control[aria-pressed="true"] {
-  filter: drop-shadow(0 0 20px #ffa83d);
-}
-
-.campfire-art {
-  position: relative;
-  display: block;
-  width: 80px;
-  height: 80px;
-  margin: auto;
-}
-
-.campfire-art::before {
-  content: '';
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 7px;
-  height: 22px;
-  border-radius: 50%;
-  background: #f875193d;
-  filter: blur(10px);
-  animation: camp-glow 1.7s ease-in-out infinite alternate;
-}
-
-.flame {
-  position: absolute;
-  bottom: 23px;
-  left: 22px;
-  width: 36px;
-  height: 52px;
-  border-radius: 80% 15% 65% 55%;
-  transform: rotate(45deg);
-  transform-origin: 50% 85%;
-  animation: camp-flicker 1.2s ease-in-out infinite alternate;
-}
-
-.flame-back {
-  background: linear-gradient(130deg, #ffeaaa, #ff9f34 62%, #df3a1d);
-  box-shadow: 0 0 12px #ff8b2c, 0 0 32px #e5623577;
-}
-
-.flame-front {
-  left: 31px;
-  bottom: 24px;
-  width: 23px;
-  height: 32px;
-  background: linear-gradient(130deg, #fffcd9, #ffd77a);
-  animation-delay: -.65s;
-}
-
-.log {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  width: 52px;
-  height: 11px;
-  border-radius: 8px;
-  background: linear-gradient(#9b5a33, #442a28);
-  box-shadow: inset 0 2px 2px #d28b51;
-}
-
-.log-one {
-  transform: rotate(23deg);
-}
-
-.log-two {
-  transform: rotate(-23deg);
-}
-
-.ember {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #ffe09c;
-  box-shadow: 0 0 8px #ffac45;
-  animation: ember-rise 2s ease-out infinite;
-}
-
-.ember-one {
-  left: 25px;
-  bottom: 45px;
-}
-
-.ember-two {
-  right: 22px;
-  bottom: 48px;
-  animation-delay: -1s;
-}
-
-@keyframes camp-flicker {
-  to {
-    transform: rotate(49deg) scale(.86, 1.13);
-  }
-}
-
-@keyframes camp-glow {
-  to {
-    opacity: .65;
-    transform: scale(1.35);
-  }
-}
-
-@keyframes ember-rise {
-  to {
-    opacity: 0;
-    translate: 11px -39px;
-  }
-}
-
 /* Moving left and top keeps existing click, hover, and connection geometry intact. */
 .star {
   transition: left .8s cubic-bezier(.2, .7, .2, 1), top .8s cubic-bezier(.2, .7, .2, 1), color .3s, filter .3s, scale .3s, text-shadow .3s;
 }
 
-.star.campfire-star {
-  color: var(--star-glow);
-}
-
-.star.campfire-star .star-name {
-  opacity: 1;
-}
-
-.star.campfire-star[data-social-type="extrovert"] {
-  filter: drop-shadow(0 0 17px #ffd38e);
-}
-
-.star.campfire-star[data-social-type="ambivert"] {
-  filter: drop-shadow(0 0 9px #ffc88b);
-}
-
-.star.campfire-star[data-social-type="introvert"] {
-  filter: drop-shadow(0 0 6px var(--star-glow));
-}
-
-#campfire-sparks {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.social-spark {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #ffdb94;
-  box-shadow: 0 0 9px #ff9b4e;
-  animation: social-orbit 2.7s linear infinite;
-}
-
-.social-spark.ambivert {
-  width: 3px;
-  height: 3px;
-  opacity: .7;
-  animation-duration: 3.5s;
-}
-
-@keyframes social-orbit {
-  from {
-    transform: rotate(var(--angle)) translateX(33px) scale(.8);
-    opacity: 0;
-  }
-
-  40% {
-    opacity: 1;
-  }
-
-  to {
-    transform: rotate(calc(var(--angle) + 360deg)) translateX(49px) scale(.3);
-    opacity: 0;
-  }
-}
-
-@media (max-width: 600px) {
-  #campfire-control {
-    left: calc(50% - 49px);
-  }
-
-  .star.campfire-star .star-name {
-    font-size: 13px;
-  }
-
-  .star.campfire-star .star-detail {
-    max-width: 105px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
 
-  .star,
-  .flame,
-  .ember,
-  .campfire-art::before,
-  .social-spark {
+  .star {
     animation: none;
     transition: none;
   }
@@ -1171,7 +836,7 @@ body {
 }
 
 /* Keep the image colours unchanged; tint only the shadow around each star. */
-.star.illustrated-star:is(:hover, :focus-visible, .selected, .time-match, .campfire-star)::before {
+.star.illustrated-star:is(:hover, :focus-visible, .selected, .time-match)::before {
   filter: drop-shadow(0 0 8px var(--star-glow)) drop-shadow(0 0 16px var(--star-glow));
 }
 
@@ -1181,28 +846,12 @@ body {
 
 
 /* Hand-drawn hobby pictures sit beside the existing readable labels. */
-.hobby-tag,
-.star.selected .hobby-tag,
-.star:is(:hover, :focus-visible) .hobby-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
 .hobby-picture {
   display: block;
   width: 26px;
   height: 26px;
   flex: 0 0 26px;
   object-fit: contain;
-}
-
-@media (max-width: 600px) {
-  .hobby-picture {
-    width: 21px;
-    height: 21px;
-    flex-basis: 21px;
-  }
 }
 
 /* Hobby sketches and names float freely beside the selected star. */

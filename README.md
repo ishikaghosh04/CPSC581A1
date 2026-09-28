@@ -47,7 +47,7 @@ The sun and moon stay at the top of the screen; the four member stars are the dr
 | `music-cat.svg` | Included artwork; the current star connection interaction uses hobby highlighting instead of launching this scene. |
 | `LICENSE` | Project licence. |
 
-Some hobby artwork is embedded in `script.js` as image data. The pictured hobbies are also mapped to files in `images/hobbies/`.
+Each pictured hobby is mapped to a PNG in `images/hobbies/`, and `script.js` loads the pictures from that folder.
 
 ## Customize a member
 
