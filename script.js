@@ -6,18 +6,24 @@ const hoveredHobbyStars = new Set();
 const pointerHoverStars = new Set();
 const keyboardFocusStars = new Set();
 
-// Utaha's illustrated star frames; all profile and connection behaviour remains here.
-const starArtPrefix = { Ishika: "ishika", Utaha: "uta", Yasmin: "uta", Linden: "linden" };
+// Change filenames here to choose each person's initial, hover, and clicked art.
+// Files live in the images/ folder. Both glow stages use the same hover picture.
+const starPictures = {
+  Ishika: { initial: "uta4.png", hover: "ishika4.png", clicked: "ishika1.png" },
+  Yasmin:  { initial: "linden4.png", hover: "linden1.png", clicked: "linden2.png" },
+  Utaha: { initial: "uta2.png", hover: "ishika3.png", clicked: "ishika2.png" },
+  Linden: { initial: "linden3.png", hover: "ishika3.png", clicked: "ishika2.png" }
+};
 function attachStarArt(el, star) {
-  el.classList.add("illustrated-star");
-  el.classList.add(`star-art-${star.id}`);
-  const prefix = starArtPrefix[star.name];
-  for (let frame = 1; frame <= 4; frame++) {
-    const url = `images/${prefix}${frame}.png`;
-    el.style.setProperty(`--art-${frame}`, `url("${url}")`);
+  el.classList.add("illustrated-star", `star-art-${star.id}`);
+  const pictures = starPictures[star.name];
+  const frames = [pictures.initial, pictures.hover, pictures.hover, pictures.clicked];
+  frames.forEach((filename, index) => {
+    const url = `images/${filename}`;
+    el.style.setProperty(`--art-${index + 1}`, `url("${url}")`);
     const preload = new Image();
     preload.src = url;
-  }
+  });
 }
 
 // Embedded artwork keeps the labelled hobbies visible without extra asset folders.
