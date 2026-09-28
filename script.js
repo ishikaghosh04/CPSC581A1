@@ -8,25 +8,27 @@ const keyboardFocusStars = new Set();
 
 // Change filenames here to choose each person's initial, hover, and clicked art.
 // Files live in the images/ folder. Both glow stages use the same hover picture.
+// Linden's four star pictures: initial, first hover, second hover, selected.
+// Yasmin uses Utaha's first and third frames, as in Linden's original code.
 const starPictures = {
-  Ishika: { initial: "uta4.png", hover: "ishika4.png", clicked: "ishika1.png" },
-  Yasmin:  { initial: "linden4.png", hover: "linden1.png", clicked: "linden2.png" },
-  Utaha: { initial: "uta2.png", hover: "ishika3.png", clicked: "ishika2.png" },
-  Linden: { initial: "linden3.png", hover: "ishika3.png", clicked: "ishika2.png" }
+  Ishika: { initial: "ishika1.png", hover1: "ishika2.png", hover2: "ishika3.png", clicked: "ishika4.png" },
+  Utaha:  { initial: "uta1.png", hover1: "uta2.png", hover2: "uta3.png", clicked: "uta4.png" },
+  Yasmin: { initial: "uta1.png", hover1: "yasmin2.png", hover2: "uta3.png", clicked: "yasmin4.png" },
+  Linden: { initial: "linden1.png", hover1: "linden2.png", hover2: "linden3.png", clicked: "linden4.png" }
 };
 // Choose one sun picture and one moon picture for EVERY star.
 // Put each image in images/. These choices are independent of initial/hover/clicked.
 // Empty strings keep the usual star picture until you choose one.
 const timePictures = {
-  Ishika: { morning: "uta1.png", night: "ishika1.png" },
-  Utaha:  { morning: "ishika1.png", night: "uta1.png" },
-  Yasmin: { morning: "ishika1.png", night: "uta1.png" },
-  Linden: { morning: "uta1.png", night: "ishika1.png" }
+  Ishika: { morning: "linden2.png", night: "ishika4.png" },
+  Utaha:  { morning: "ishika4.png", night: "linden2.png" },
+  Yasmin: { morning: "ishika4.png", night: "linden2.png" },
+  Linden: { morning: "linden2.png", night: "ishika4.png" }
 };
 function attachStarArt(el, star) {
   el.classList.add("illustrated-star", `star-art-${star.id}`);
   const pictures = starPictures[star.name];
-  const frames = [pictures.initial, pictures.hover, pictures.hover, pictures.clicked];
+  const frames = [pictures.initial, pictures.hover1, pictures.hover2, pictures.clicked];
   frames.forEach((filename, index) => {
     const url = `images/${filename}`;
     el.style.setProperty(`--art-${index + 1}`, `url("${url}")`);
@@ -64,9 +66,9 @@ function renderStars() {
     el.appendChild(name);
     // Utaha's hobby sketches, with the existing running artwork for running.
     const hobbyPictures = {
-      Ishika: {music: "music-ishika.png", drawing: "drawing-ishika.png", running: "running-scene.svg"},
+      Ishika: {music: "music-ishika.png", drawing: "drawing-ishika.png", running: "running.png"},
       Utaha: {music: "music-uta.png", crocheting: "crochet.png", hiking: "hiking-uta.png", swimming: "swimming.png"},
-      Yasmin: {gym: "gym-yasmin.png", hiking: "hiking-yasmin.png", running: "running-scene.svg", music: "music-uta.png"},
+      Yasmin: {gym: "gym-yasmin.png", hiking: "hiking-yasmin.png", running: "running.png", music: "music-uta.png"},
       Linden: {pickleball: "pickleball.png", reading: "reading.png", drawing: "drawing-linden.png"}
     };
     const detail = document.createElement("span");
@@ -153,7 +155,7 @@ function handleHoverStart(star) {
       el.classList.remove("hover-glow-faint");
       el.classList.add("hover-glow-bright");
     }, star.hoverTime);
-  }, 100);
+  }, 1000);
 }
 
 function handleHoverEnd(star) {
@@ -550,19 +552,22 @@ function setupTimeControls() {
     function finish(event, cancelled = false) {
       if (!drag) return;
       const moved = drag.moved;
-      const mode = !cancelled && moved ? targetAt(event.clientX, event.clientY, el) : null;
-      const previousMode = drag.previousMode;
-      el.style.left = drag.left;
-      el.style.top = drag.top;
+      // Always return to the person's assigned position, even if a previous
+      // drag was interrupted before its saved inline position was restored.
+      el.style.left = `${star.position.x}%`;
+      el.style.top = `${star.position.y}%`;
       el.classList.remove("star-dragging");
       document.body.classList.remove("dragging-member");
       for (const target of Object.values(targets)) target.classList.remove("star-over-target");
       drag = null;
+      // The sun/moon image and its glow are only a drag preview.
+      setStarMode(star, null);
+      pointerHoverStars.delete(star.id);
+      clearHover(star.id);
       drawConstellation();
       if (moved) {
         suppressClick = true;
         setTimeout(() => { suppressClick = false; }, 0);
-        setStarMode(star, mode || previousMode);
       }
     }
     el.addEventListener("pointerup", event => finish(event));

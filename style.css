@@ -832,3 +832,11 @@ body.dragging-member #hobby-lines {
 #moon-control small {
   transform: translateX(30px);
 }
+
+/* Keep the same running.png artwork; tint only Ishika’s copy yellow. */
+.orbit-hobby[data-star-id="star1"][data-hobby="running"] .hobby-picture {
+  filter: hue-rotate(43deg) drop-shadow(0 0 6px rgba(255, 225, 80, .4));
+}
+.orbit-hobby.shared[data-star-id="star1"][data-hobby="running"] .hobby-picture {
+  filter: hue-rotate(43deg) drop-shadow(0 0 14px #ffd478);
+}
