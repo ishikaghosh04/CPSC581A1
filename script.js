@@ -5,7 +5,7 @@ const hoverState = {};
 
 // Components of the following code is generated using deepseek api
 const starSpritePrefixes = {
-  Ishika: "uta",
+  Ishika: "ishika",
   Utaha: "uta",
   Yasmin: "uta",
   Linden: "linden"
