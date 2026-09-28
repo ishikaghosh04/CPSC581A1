@@ -249,15 +249,12 @@ function sharedSelectedHobbies() {
 
 function starCenter(id) {
   const sky = document.getElementById("sky");
-  const el = document.getElementById(id);
-  if (!sky || !el) return null;
-
-  const bounds = sky.getBoundingClientRect();
-  const box = el.getBoundingClientRect();
+  const star = stars.find(item => item.id === id);
+  if (!sky || !star) return null;
 
   return {
-    x: box.left + box.width / 2 - bounds.left,
-    y: box.top + box.height / 2 - bounds.top
+    x: sky.clientWidth * star.position.x / 100,
+    y: sky.clientHeight * star.position.y / 100
   };
 }
 

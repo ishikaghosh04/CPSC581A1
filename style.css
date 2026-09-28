@@ -787,9 +787,11 @@ body {
   filter: drop-shadow(0 0 14px #ffe6a1);
 }
 
-/* Keep the sky clear while a member is being dragged. */
+/* Keep the sky clear while a member is being dragged; the dotted
+   constellation line reappears as soon as the member is released. */
 body.dragging-member .orbit-hobby,
-body.dragging-member #hobby-lines {
+body.dragging-member #hobby-lines,
+body.dragging-member #constellation-lines {
   display: none !important;
 }
 
