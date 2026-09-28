@@ -37,6 +37,7 @@ body {
   width: 100%;
   height: 100%;
 }
+
 .member-bg-stars path {
   transform-box: fill-box;
   transform-origin: center;
@@ -49,10 +50,10 @@ body {
 #member4-bg-stars {
   z-index: 3;
 }
+
 .member-bg-stars {
   filter:
-    drop-shadow(0 0 3px currentColor)
-    drop-shadow(0 0 7px currentColor);
+    drop-shadow(0 0 3px currentColor) drop-shadow(0 0 7px currentColor);
   animation: member-stars-shine 2.5s ease-in-out infinite alternate;
 }
 
@@ -60,6 +61,7 @@ body {
   from {
     opacity: 0.65;
   }
+
   to {
     opacity: 2.75;
   }
@@ -112,6 +114,7 @@ body {
       0 0 14px var(--star-glow, #ffffff),
       0 0 24px var(--star-glow, #ffffff);
   }
+
   50% {
     scale: 1.2;
     text-shadow:
@@ -120,6 +123,7 @@ body {
       0 0 40px var(--star-glow, #ffffff),
       0 0 60px var(--star-glow, #ffffff);
   }
+
   100% {
     scale: 1;
     text-shadow:
@@ -130,9 +134,17 @@ body {
 }
 
 @keyframes pulse {
-0% { transform: scale(1); }
-50% { transform: scale(1.2); }
-100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pulse {
@@ -168,6 +180,7 @@ body {
   stroke-dasharray: 0.01 12.99;
   z-index: 1;
 }
+
 /* Reveal a member's name and chosen colour on hover or keyboard focus. */
 .star {
   border: 0;
@@ -175,16 +188,23 @@ body {
   background: transparent;
   font-family: inherit;
 }
+
 .star:hover,
 .star:focus-visible {
   color: var(--star-glow);
   text-shadow: 0 0 8px var(--star-glow), 0 0 20px var(--star-glow);
 }
-.star:focus-visible { outline: 2px solid white; outline-offset: 6px; }
+
+.star:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 6px;
+}
+
 .star.selected {
   color: var(--star-glow);
   filter: drop-shadow(0 0 12px var(--star-glow));
 }
+
 .star-name {
   position: absolute;
   top: 100%;
@@ -198,14 +218,18 @@ body {
   pointer-events: none;
   transition: opacity .2s, transform .2s;
 }
+
 .star:hover .star-name,
 .star:focus-visible .star-name,
 .star.selected .star-name {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .star-name { transition: none; }
+  .star-name {
+    transition: none;
+  }
 }
 
 /* All hobbies appear after sustained hover or keyboard focus. */
@@ -223,6 +247,7 @@ body {
   pointer-events: none;
   transition: opacity 0.2s;
 }
+
 .hobby-tag {
   padding: 4px 7px;
   border-radius: 14px;
@@ -233,18 +258,26 @@ body {
   white-space: nowrap;
   text-shadow: none;
 }
+
 .star:hover .star-detail,
 .star:focus-visible .star-detail {
   opacity: 1;
   transition-delay: 1.2s;
 }
+
 .star.selected .star-detail {
   opacity: 1;
   transition-delay: 0s;
 }
+
 @media (max-width: 600px) {
-  .star-detail { width: 160px; }
-  .hobby-tag { font-size: 10px; }
+  .star-detail {
+    width: 160px;
+  }
+
+  .hobby-tag {
+    font-size: 10px;
+  }
 }
 
 /* A connecting thread grows from one selected star toward another. */
@@ -255,7 +288,13 @@ body {
   stroke-dashoffset: 1;
   animation: grow-line .7s ease-out forwards;
 }
-@keyframes grow-line { to { stroke-dashoffset: 0; } }
+
+@keyframes grow-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .hobby-tag.shared {
   background: #f7e4ad;
   color: #161826;
@@ -263,6 +302,7 @@ body {
   box-shadow: 0 0 14px #ffe28d;
   font-weight: 700;
 }
+
 #pair-caption {
   position: fixed;
   left: 50%;
@@ -281,90 +321,270 @@ body {
   pointer-events: none;
   transition: opacity .25s, transform .25s, visibility .25s;
 }
+
 #pair-caption.visible {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) translateY(0);
 }
-#pair-caption strong { display: block; margin-bottom: 5px; font-size: 16px; }
-#pair-caption p { margin: 3px 0; }
+
+#pair-caption strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+#pair-caption p {
+  margin: 3px 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .connecting-line { animation: none; stroke-dashoffset: 0; }
-  #pair-caption { transition: none; }
+  .connecting-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  #pair-caption {
+    transition: none;
+  }
 }
 
 /* Drag the sun or moon into the sky to reveal the team's rhythms. */
-#time-controls { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
+#time-controls {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+}
+
 .time-control {
-  position: absolute; top: 16px; left: 40%; z-index: 2;
-  width: 96px; height: 110px; border: 0;
-  border-radius: 50%; background: transparent; color: #fff9e9;
-  font: 600 12px/1.2 system-ui, sans-serif; cursor: grab;
-  touch-action: none; user-select: none; pointer-events: auto;
+  position: absolute;
+  top: 16px;
+  left: 40%;
+  z-index: 2;
+  width: 96px;
+  height: 110px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff9e9;
+  font: 600 12px/1.2 system-ui, sans-serif;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  pointer-events: auto;
   transition: filter .2s;
 }
-.time-control small { display: block; font: inherit; margin-top: 3px; text-shadow: 0 0 8px #1b213d; }
-#moon-control { left: auto; right: 40%; }
-.time-control.dragging { cursor: grabbing; }
-.time-control:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-.time-control[aria-pressed="true"] { filter: brightness(1.3); }
-.celestial-art { display: block; position: relative; margin: auto; width: 82px; height: 82px; }
+
+.time-control small {
+  display: block;
+  font: inherit;
+  margin-top: 3px;
+  text-shadow: 0 0 8px #1b213d;
+}
+
+#moon-control {
+  left: auto;
+  right: 40%;
+}
+
+.time-control.dragging {
+  cursor: grabbing;
+}
+
+.time-control:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.time-control[aria-pressed="true"] {
+  filter: brightness(1.3);
+}
+
+.celestial-art {
+  display: block;
+  position: relative;
+  margin: auto;
+  width: 82px;
+  height: 82px;
+}
+
 .sun-rays {
-  position: absolute; inset: 0; border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   background: repeating-conic-gradient(from 0deg, #ffca64 0deg 9deg, transparent 10deg 30deg);
   filter: drop-shadow(0 0 14px #ffb652);
   animation: sun-spin 18s linear infinite;
 }
+
 .sun-core {
-  position: absolute; inset: 15px; border-radius: 50%;
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
   background: radial-gradient(circle at 34% 28%, #fff8bb, #ffce54 54%, #f78337 100%);
   box-shadow: 0 0 12px 5px #ffcc6699, 0 0 38px 12px #ffab4e66;
   animation: sun-breathe 2.6s ease-in-out infinite alternate;
 }
-.moon-orbit { position: absolute; inset: 8px; border: 1px solid #c3d5ff66; border-radius: 50%; animation: sun-spin 10s linear infinite; }
+
+.moon-orbit {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid #c3d5ff66;
+  border-radius: 50%;
+  animation: sun-spin 10s linear infinite;
+}
+
 .moon-core {
-  position: absolute; inset: 11px 16px 13px 16px; border-radius: 50%;
+  position: absolute;
+  inset: 11px 16px 13px 16px;
+  border-radius: 50%;
   background: radial-gradient(circle at 25% 35%, #fffefa, #dce4ff 62%, #8ca9e2);
   box-shadow: 0 0 16px #c8d8ff, 0 0 42px #93b6ff88;
   animation: moon-float 3.5s ease-in-out infinite alternate;
 }
+
 .moon-core::after {
-  content: ""; position: absolute; inset: -7px -12px 7px 15px; border-radius: 50%;
-  background: #0a0a1a; box-shadow: -4px 1px 5px #ffffff33;
+  content: "";
+  position: absolute;
+  inset: -7px -12px 7px 15px;
+  border-radius: 50%;
+  background: #0a0a1a;
+  box-shadow: -4px 1px 5px #ffffff33;
 }
-.moon-spark { position: absolute; color: #ddebff; font: 19px/1 system-ui; text-shadow: 0 0 12px #ddebff; animation: moon-twinkle 1.8s ease-in-out infinite alternate; }
-.moon-spark.one { top: 8px; right: 5px; }
-.moon-spark.two { bottom: 8px; left: 1px; font-size: 12px; animation-delay: .8s; }
-@keyframes sun-spin { to { transform: rotate(360deg); } }
-@keyframes sun-breathe { to { transform: scale(1.09); box-shadow: 0 0 18px 8px #ffdc8abb, 0 0 45px 17px #ff9c4b77; } }
-@keyframes moon-float { to { transform: translateY(-5px) rotate(-4deg); } }
-@keyframes moon-twinkle { to { opacity: .3; transform: scale(.65); } }
+
+.moon-spark {
+  position: absolute;
+  color: #ddebff;
+  font: 19px/1 system-ui;
+  text-shadow: 0 0 12px #ddebff;
+  animation: moon-twinkle 1.8s ease-in-out infinite alternate;
+}
+
+.moon-spark.one {
+  top: 8px;
+  right: 5px;
+}
+
+.moon-spark.two {
+  bottom: 8px;
+  left: 1px;
+  font-size: 12px;
+  animation-delay: .8s;
+}
+
+@keyframes sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sun-breathe {
+  to {
+    transform: scale(1.09);
+    box-shadow: 0 0 18px 8px #ffdc8abb, 0 0 45px 17px #ff9c4b77;
+  }
+}
+
+@keyframes moon-float {
+  to {
+    transform: translateY(-5px) rotate(-4deg);
+  }
+}
+
+@keyframes moon-twinkle {
+  to {
+    opacity: .3;
+    transform: scale(.65);
+  }
+}
+
 #time-target {
-  position: absolute; left: 50%; top: 43%; transform: translate(-50%, -50%);
-  display: grid; place-items: center; width: 190px; height: 105px;
-  border: 2px dashed #cdd7f488; border-radius: 55%;
-  color: #e5eaff; background: #1b234c55;
-  font: 600 12px/1.3 system-ui, sans-serif; text-align: center;
-  opacity: 0; transition: opacity .2s, background .2s;
+  position: absolute;
+  left: 50%;
+  top: 43%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 190px;
+  height: 105px;
+  border: 2px dashed #cdd7f488;
+  border-radius: 55%;
+  color: #e5eaff;
+  background: #1b234c55;
+  font: 600 12px/1.3 system-ui, sans-serif;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .2s, background .2s;
 }
-#time-controls.dragging #time-target { opacity: 1; }
-#time-controls.in-target #time-target { background: #f8e7a755; }
-.screen-reader-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-.star.time-match { color: var(--time-color); scale: 1.37; filter: drop-shadow(0 0 18px var(--time-color)) drop-shadow(0 0 28px var(--time-color)); }
+
+#time-controls.dragging #time-target {
+  opacity: 1;
+}
+
+#time-controls.in-target #time-target {
+  background: #f8e7a755;
+}
+
+.screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.star.time-match {
+  color: var(--time-color);
+  scale: 1.37;
+  filter: drop-shadow(0 0 18px var(--time-color)) drop-shadow(0 0 28px var(--time-color));
+}
+
 .star.time-match::after {
-  content: attr(data-time-label); position: absolute; top: -11px; left: 50%;
-  translate: -50% -100%; white-space: nowrap;
-  color: var(--time-color); font: 700 11px/1 system-ui, sans-serif;
+  content: attr(data-time-label);
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  translate: -50% -100%;
+  white-space: nowrap;
+  color: var(--time-color);
+  font: 700 11px/1 system-ui, sans-serif;
   text-shadow: 0 0 9px var(--time-color);
 }
+
 @media (max-width: 600px) {
-  #sun-control { left: 14px; }
-  #moon-control { left: auto; right: 14px; }
-  .star.time-match { scale: 1.23; }
+  #sun-control {
+    left: 14px;
+  }
+
+  #moon-control {
+    left: auto;
+    right: 14px;
+  }
+
+  .star.time-match {
+    scale: 1.23;
+  }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .star.time-match, .time-control, .sun-rays, .sun-core, .moon-orbit, .moon-core, .moon-spark { animation: none; transition: none; }
+
+  .star.time-match,
+  .time-control,
+  .sun-rays,
+  .sun-core,
+  .moon-orbit,
+  .moon-core,
+  .moon-spark {
+    animation: none;
+    transition: none;
+  }
 }
+
 /* Selected stars show a tidy profile beside the star. */
 .star.selected .star-name {
   top: calc(50% - 29px);
@@ -372,6 +592,7 @@ body {
   transform: none;
   font-size: 18px;
 }
+
 .star.selected .star-detail {
   top: calc(50% + 2px);
   left: calc(100% + 14px);
@@ -383,10 +604,12 @@ body {
   align-items: flex-start;
   gap: 6px;
 }
+
 .star.selected .hobby-tag {
   display: block;
   font-size: 12px;
 }
+
 /* Ishika and Yasmin have their names and hobbies on the left. */
 #star1.selected .star-name,
 #star3.selected .star-name {
@@ -394,21 +617,35 @@ body {
   right: calc(100% + 14px);
   text-align: right;
 }
+
 #star1.selected .star-detail,
 #star3.selected .star-detail {
   left: auto;
   right: calc(100% + 14px);
   align-items: flex-end;
 }
+
 @media (max-width: 600px) {
-  .star.selected .star-name { font-size: 15px; }
-  .star.selected .hobby-tag { font-size: 10px; padding: 4px 5px; }
-  #star1.selected .star-name, #star3.selected .star-name,
-  #star1.selected .star-detail, #star3.selected .star-detail {
+  .star.selected .star-name {
+    font-size: 15px;
+  }
+
+  .star.selected .hobby-tag {
+    font-size: 10px;
+    padding: 4px 5px;
+  }
+
+  #star1.selected .star-name,
+  #star3.selected .star-name,
+  #star1.selected .star-detail,
+  #star3.selected .star-detail {
     right: calc(100% + 6px);
   }
-  #star2.selected .star-name, #star4.selected .star-name,
-  #star2.selected .star-detail, #star4.selected .star-detail {
+
+  #star2.selected .star-name,
+  #star4.selected .star-name,
+  #star2.selected .star-detail,
+  #star4.selected .star-detail {
     left: calc(100% + 6px);
   }
 }
@@ -420,6 +657,7 @@ body {
   transform: none;
   font-size: 18px;
 }
+
 .star:is(:hover, :focus-visible) .star-detail {
   top: calc(50% + 2px);
   left: calc(100% + 14px);
@@ -431,33 +669,49 @@ body {
   align-items: flex-start;
   gap: 6px;
 }
+
 .star:is(:hover, :focus-visible) .hobby-tag {
   display: block;
   font-size: 12px;
 }
+
 #star1:is(:hover, :focus-visible) .star-name,
 #star3:is(:hover, :focus-visible) .star-name {
   left: auto;
   right: calc(100% + 14px);
   text-align: right;
 }
+
 #star1:is(:hover, :focus-visible) .star-detail,
 #star3:is(:hover, :focus-visible) .star-detail {
   left: auto;
   right: calc(100% + 14px);
   align-items: flex-end;
 }
+
 @media (max-width: 600px) {
-  .star:is(:hover, :focus-visible) .star-name { font-size: 15px; }
-  .star:is(:hover, :focus-visible) .hobby-tag { font-size: 10px; padding: 4px 5px; }
+  .star:is(:hover, :focus-visible) .star-name {
+    font-size: 15px;
+  }
+
+  .star:is(:hover, :focus-visible) .hobby-tag {
+    font-size: 10px;
+    padding: 4px 5px;
+  }
+
   #star1:is(:hover, :focus-visible) .star-name,
   #star3:is(:hover, :focus-visible) .star-name,
   #star1:is(:hover, :focus-visible) .star-detail,
-  #star3:is(:hover, :focus-visible) .star-detail { right: calc(100% + 6px); }
+  #star3:is(:hover, :focus-visible) .star-detail {
+    right: calc(100% + 6px);
+  }
+
   #star2:is(:hover, :focus-visible) .star-name,
   #star4:is(:hover, :focus-visible) .star-name,
   #star2:is(:hover, :focus-visible) .star-detail,
-  #star4:is(:hover, :focus-visible) .star-detail { left: calc(100% + 6px); }
+  #star4:is(:hover, :focus-visible) .star-detail {
+    left: calc(100% + 6px);
+  }
 }
 
 /* Reveal each matching person's name beside a brighter, stronger star. */
@@ -466,11 +720,13 @@ body {
   -webkit-text-stroke: 1.3px currentColor;
   scale: 1.52;
 }
+
 .star.time-match::after,
 .star.time-match .star-name,
 .star.time-match .star-detail {
   -webkit-text-stroke: 0;
 }
+
 .star.time-match .star-name {
   opacity: 1;
   color: var(--time-color);
@@ -478,29 +734,46 @@ body {
   font-weight: 800;
   text-shadow: 0 0 12px var(--time-color), 0 1px 8px #080a20;
 }
+
 .star.time-match:not(.selected) .star-name {
   top: 50%;
   left: calc(100% + 14px);
   transform: translateY(-50%);
 }
+
 #star1.time-match:not(.selected) .star-name,
 #star3.time-match:not(.selected) .star-name {
   left: auto;
   right: calc(100% + 14px);
   text-align: right;
 }
+
 @media (max-width: 600px) {
-  .star.time-match { scale: 1.28; }
-  .star.time-match .star-name { font-size: 15px; }
+  .star.time-match {
+    scale: 1.28;
+  }
+
+  .star.time-match .star-name {
+    font-size: 15px;
+  }
 }
 
 /* When two stars connect, their difference unfolds into two colored portraits. */
 #pair-caption:has(.difference-comparison) {
   width: min(420px, calc(100vw - 28px));
 }
-#pair-caption { padding: 9px 12px; }
-.difference-comparison { margin-top: 6px; }
-.difference-card { padding: 4px 6px; }
+
+#pair-caption {
+  padding: 9px 12px;
+}
+
+.difference-comparison {
+  margin-top: 6px;
+}
+
+.difference-card {
+  padding: 4px 6px;
+}
 
 .difference-comparison {
   display: grid;
@@ -509,6 +782,7 @@ body {
   gap: 8px;
   margin-top: 11px;
 }
+
 .difference-card {
   min-width: 0;
   display: flex;
@@ -519,10 +793,14 @@ body {
   border-radius: 14px;
   background: color-mix(in srgb, var(--card-color) 16%, #11172d);
   box-shadow: inset 0 0 16px color-mix(in srgb, var(--card-color) 20%, transparent),
-              0 0 14px color-mix(in srgb, var(--card-color) 22%, transparent);
+    0 0 14px color-mix(in srgb, var(--card-color) 22%, transparent);
   animation: difference-appear .55s cubic-bezier(.2, 1.3, .4, 1) both;
 }
-.difference-card:last-child { animation-delay: .13s; }
+
+.difference-card:last-child {
+  animation-delay: .13s;
+}
+
 .difference-symbol {
   flex: 0 0 32px;
   color: var(--card-color);
@@ -530,113 +808,373 @@ body {
   text-align: center;
   text-shadow: 0 0 12px var(--card-color);
 }
-.difference-card b, .difference-card small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.difference-card b { color: var(--card-color); font: 700 13px/1.3 system-ui, sans-serif; }
-.difference-card small { color: #f4f5ff; font: 12px/1.3 system-ui, sans-serif; }
-.difference-link { color: #fff0bc; text-align: center; font-size: 22px; text-shadow: 0 0 12px #fff0bc; animation: difference-spark 2s ease-in-out infinite alternate; }
-@keyframes difference-appear { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes difference-spark { to { opacity: .45; transform: scale(.8); } }
-@media (max-width: 460px) {
-  .difference-comparison { gap: 3px; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); }
-  .difference-card { padding: 7px 6px; gap: 4px; }
-  .difference-symbol { flex-basis: 22px; font-size: 23px; }
-  .difference-card b { font-size: 11px; }
-  .difference-card small { font-size: 10px; }
+
+.difference-card b,
+.difference-card small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+.difference-card b {
+  color: var(--card-color);
+  font: 700 13px/1.3 system-ui, sans-serif;
+}
+
+.difference-card small {
+  color: #f4f5ff;
+  font: 12px/1.3 system-ui, sans-serif;
+}
+
+.difference-link {
+  color: #fff0bc;
+  text-align: center;
+  font-size: 22px;
+  text-shadow: 0 0 12px #fff0bc;
+  animation: difference-spark 2s ease-in-out infinite alternate;
+}
+
+@keyframes difference-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes difference-spark {
+  to {
+    opacity: .45;
+    transform: scale(.8);
+  }
+}
+
+@media (max-width: 460px) {
+  .difference-comparison {
+    gap: 3px;
+    grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+  }
+
+  .difference-card {
+    padding: 7px 6px;
+    gap: 4px;
+  }
+
+  .difference-symbol {
+    flex-basis: 22px;
+    font-size: 23px;
+  }
+
+  .difference-card b {
+    font-size: 11px;
+  }
+
+  .difference-card small {
+    font-size: 10px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .difference-card, .difference-link { animation: none; }
+
+  .difference-card,
+  .difference-link {
+    animation: none;
+  }
 }
 
 /* Drag the animated campfire into the sky to show social distance. */
 #campfire-control {
-  position: fixed; top: 16px; left: calc(50% - 49px); z-index: 10;
-  width: 98px; height: 112px; border: 0; background: transparent;
-  color: #ffdeb2; font: 600 12px/1.2 system-ui, sans-serif;
-  text-shadow: 0 1px 9px #121020; cursor: grab;
-  touch-action: none; user-select: none; transition: filter .2s;
+  position: fixed;
+  top: 16px;
+  left: calc(50% - 49px);
+  z-index: 10;
+  width: 98px;
+  height: 112px;
+  border: 0;
+  background: transparent;
+  color: #ffdeb2;
+  font: 600 12px/1.2 system-ui, sans-serif;
+  text-shadow: 0 1px 9px #121020;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: filter .2s;
 }
-#campfire-control.dragging { cursor: grabbing; }
-#campfire-control:focus-visible { outline: 3px solid white; outline-offset: 3px; }
-#campfire-control small { display: block; margin-top: 3px; }
-#campfire-control.near-center, #campfire-control[aria-pressed="true"] { filter: drop-shadow(0 0 20px #ffa83d); }
-.campfire-art { position: relative; display: block; width: 80px; height: 80px; margin: auto; }
+
+#campfire-control.dragging {
+  cursor: grabbing;
+}
+
+#campfire-control:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+#campfire-control small {
+  display: block;
+  margin-top: 3px;
+}
+
+#campfire-control.near-center,
+#campfire-control[aria-pressed="true"] {
+  filter: drop-shadow(0 0 20px #ffa83d);
+}
+
+.campfire-art {
+  position: relative;
+  display: block;
+  width: 80px;
+  height: 80px;
+  margin: auto;
+}
+
 .campfire-art::before {
-  content: ''; position: absolute; left: 12px; right: 12px; bottom: 7px;
-  height: 22px; border-radius: 50%; background: #f875193d; filter: blur(10px);
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 7px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f875193d;
+  filter: blur(10px);
   animation: camp-glow 1.7s ease-in-out infinite alternate;
 }
-.flame { position: absolute; bottom: 23px; left: 22px; width: 36px; height: 52px;
-  border-radius: 80% 15% 65% 55%; transform: rotate(45deg);
-  transform-origin: 50% 85%; animation: camp-flicker 1.2s ease-in-out infinite alternate;
+
+.flame {
+  position: absolute;
+  bottom: 23px;
+  left: 22px;
+  width: 36px;
+  height: 52px;
+  border-radius: 80% 15% 65% 55%;
+  transform: rotate(45deg);
+  transform-origin: 50% 85%;
+  animation: camp-flicker 1.2s ease-in-out infinite alternate;
 }
-.flame-back { background: linear-gradient(130deg, #ffeaaa, #ff9f34 62%, #df3a1d);
-  box-shadow: 0 0 12px #ff8b2c, 0 0 32px #e5623577; }
-.flame-front { left: 31px; bottom: 24px; width: 23px; height: 32px;
+
+.flame-back {
+  background: linear-gradient(130deg, #ffeaaa, #ff9f34 62%, #df3a1d);
+  box-shadow: 0 0 12px #ff8b2c, 0 0 32px #e5623577;
+}
+
+.flame-front {
+  left: 31px;
+  bottom: 24px;
+  width: 23px;
+  height: 32px;
   background: linear-gradient(130deg, #fffcd9, #ffd77a);
-  animation-delay: -.65s; }
-.log { position: absolute; bottom: 14px; left: 14px; width: 52px; height: 11px;
-  border-radius: 8px; background: linear-gradient(#9b5a33, #442a28);
-  box-shadow: inset 0 2px 2px #d28b51; }
-.log-one { transform: rotate(23deg); } .log-two { transform: rotate(-23deg); }
-.ember { position: absolute; width: 5px; height: 5px; border-radius: 50%;
-  background: #ffe09c; box-shadow: 0 0 8px #ffac45;
-  animation: ember-rise 2s ease-out infinite; }
-.ember-one { left: 25px; bottom: 45px; } .ember-two { right: 22px; bottom: 48px; animation-delay: -1s; }
-@keyframes camp-flicker { to { transform: rotate(49deg) scale(.86, 1.13); } }
-@keyframes camp-glow { to { opacity: .65; transform: scale(1.35); } }
-@keyframes ember-rise { to { opacity: 0; translate: 11px -39px; } }
-/* Moving left and top keeps existing click, hover, and connection geometry intact. */
-.star { transition: left .8s cubic-bezier(.2,.7,.2,1), top .8s cubic-bezier(.2,.7,.2,1), color .3s, filter .3s, scale .3s, text-shadow .3s; }
-.star.campfire-star { color: var(--star-glow); }
-.star.campfire-star .star-name { opacity: 1; }
-.star.campfire-star[data-social-type="extrovert"] { filter: drop-shadow(0 0 17px #ffd38e); }
-.star.campfire-star[data-social-type="ambivert"] { filter: drop-shadow(0 0 9px #ffc88b); }
-.star.campfire-star[data-social-type="introvert"] { filter: drop-shadow(0 0 6px var(--star-glow)); }
-#campfire-sparks { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
-.social-spark { position: absolute; width: 5px; height: 5px; border-radius: 50%;
-  background: #ffdb94; box-shadow: 0 0 9px #ff9b4e;
-  animation: social-orbit 2.7s linear infinite; }
-.social-spark.ambivert { width: 3px; height: 3px; opacity: .7; animation-duration: 3.5s; }
-@keyframes social-orbit { from { transform: rotate(var(--angle)) translateX(33px) scale(.8); opacity: 0; }
-  40% { opacity: 1; } to { transform: rotate(calc(var(--angle) + 360deg)) translateX(49px) scale(.3); opacity: 0; } }
-@media (max-width: 600px) {
-  #campfire-control { left: calc(50% - 49px); }
-  .star.campfire-star .star-name { font-size: 13px; }
-  .star.campfire-star .star-detail { max-width: 105px; }
+  animation-delay: -.65s;
 }
+
+.log {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  width: 52px;
+  height: 11px;
+  border-radius: 8px;
+  background: linear-gradient(#9b5a33, #442a28);
+  box-shadow: inset 0 2px 2px #d28b51;
+}
+
+.log-one {
+  transform: rotate(23deg);
+}
+
+.log-two {
+  transform: rotate(-23deg);
+}
+
+.ember {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffe09c;
+  box-shadow: 0 0 8px #ffac45;
+  animation: ember-rise 2s ease-out infinite;
+}
+
+.ember-one {
+  left: 25px;
+  bottom: 45px;
+}
+
+.ember-two {
+  right: 22px;
+  bottom: 48px;
+  animation-delay: -1s;
+}
+
+@keyframes camp-flicker {
+  to {
+    transform: rotate(49deg) scale(.86, 1.13);
+  }
+}
+
+@keyframes camp-glow {
+  to {
+    opacity: .65;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes ember-rise {
+  to {
+    opacity: 0;
+    translate: 11px -39px;
+  }
+}
+
+/* Moving left and top keeps existing click, hover, and connection geometry intact. */
+.star {
+  transition: left .8s cubic-bezier(.2, .7, .2, 1), top .8s cubic-bezier(.2, .7, .2, 1), color .3s, filter .3s, scale .3s, text-shadow .3s;
+}
+
+.star.campfire-star {
+  color: var(--star-glow);
+}
+
+.star.campfire-star .star-name {
+  opacity: 1;
+}
+
+.star.campfire-star[data-social-type="extrovert"] {
+  filter: drop-shadow(0 0 17px #ffd38e);
+}
+
+.star.campfire-star[data-social-type="ambivert"] {
+  filter: drop-shadow(0 0 9px #ffc88b);
+}
+
+.star.campfire-star[data-social-type="introvert"] {
+  filter: drop-shadow(0 0 6px var(--star-glow));
+}
+
+#campfire-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.social-spark {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffdb94;
+  box-shadow: 0 0 9px #ff9b4e;
+  animation: social-orbit 2.7s linear infinite;
+}
+
+.social-spark.ambivert {
+  width: 3px;
+  height: 3px;
+  opacity: .7;
+  animation-duration: 3.5s;
+}
+
+@keyframes social-orbit {
+  from {
+    transform: rotate(var(--angle)) translateX(33px) scale(.8);
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  to {
+    transform: rotate(calc(var(--angle) + 360deg)) translateX(49px) scale(.3);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  #campfire-control {
+    left: calc(50% - 49px);
+  }
+
+  .star.campfire-star .star-name {
+    font-size: 13px;
+  }
+
+  .star.campfire-star .star-detail {
+    max-width: 105px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .star, .flame, .ember, .campfire-art::before, .social-spark { animation: none; transition: none; }
+
+  .star,
+  .flame,
+  .ember,
+  .campfire-art::before,
+  .social-spark {
+    animation: none;
+    transition: none;
+  }
 }
 
 
 /* Utaha's hand-drawn star shapes; Yasmin's labels, profiles and effects remain. */
 .star.illustrated-star {
-  width: 78px; height: 78px;
-  font-size: 0; /* The artwork replaces the original text star. */
+  width: 78px;
+  height: 78px;
+  font-size: 0;
+  /* The artwork replaces the original text star. */
   isolation: isolate;
 }
+
 .star.illustrated-star::before {
   content: "";
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   background-image: var(--art-1);
-  background-position: center; background-size: contain; background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   filter: none;
   pointer-events: none;
   z-index: 0;
 }
+
 .star.illustrated-star .star-name,
-.star.illustrated-star .star-detail { z-index: 1; }
-.star.illustrated-star.hover-glow-faint::before { background-image: var(--art-2); }
-.star.illustrated-star.hover-glow-bright::before { background-image: var(--art-3); }
-.star.illustrated-star.selected::before { background-image: var(--art-4); }
+.star.illustrated-star .star-detail {
+  z-index: 1;
+}
+
+.star.illustrated-star.hover-glow-faint::before {
+  background-image: var(--art-2);
+}
+
+.star.illustrated-star.hover-glow-bright::before {
+  background-image: var(--art-3);
+}
+
+.star.illustrated-star.selected::before {
+  background-image: var(--art-4);
+}
+
 @media (max-width: 600px) {
-  .star.illustrated-star { width: 62px; height: 62px; }
+  .star.illustrated-star {
+    width: 62px;
+    height: 62px;
+  }
 }
 
 /* Keep the image colours unchanged; tint only the shadow around each star. */
 .star.illustrated-star:is(:hover, :focus-visible, .selected, .time-match, .campfire-star)::before {
   filter: drop-shadow(0 0 8px var(--star-glow)) drop-shadow(0 0 16px var(--star-glow));
 }
+
 .star.illustrated-star.hover-glow-bright::before {
   filter: drop-shadow(0 0 12px var(--star-glow)) drop-shadow(0 0 23px var(--star-glow));
 }
@@ -646,14 +1184,25 @@ body {
 .hobby-tag,
 .star.selected .hobby-tag,
 .star:is(:hover, :focus-visible) .hobby-tag {
-  display: inline-flex; align-items: center; gap: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
+
 .hobby-picture {
-  display: block; width: 26px; height: 26px; flex: 0 0 26px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
   object-fit: contain;
 }
+
 @media (max-width: 600px) {
-  .hobby-picture { width: 21px; height: 21px; flex-basis: 21px; }
+  .hobby-picture {
+    width: 21px;
+    height: 21px;
+    flex-basis: 21px;
+  }
 }
 
 /* Hobby sketches and names float freely beside the selected star. */
@@ -671,6 +1220,7 @@ body {
   color: #fff;
   font-size: 13px;
 }
+
 .hobby-tag.shared {
   padding: 0;
   border: 0;
@@ -679,23 +1229,43 @@ body {
   color: #ffe6a6;
   text-shadow: 0 0 10px #ffd478, 0 0 18px #ffd478;
 }
+
 .hobby-tag.shared .hobby-picture {
   filter: drop-shadow(0 0 7px #ffd478);
 }
-.hobby-picture { width: 30px; height: 30px; flex-basis: 30px; }
+
+.hobby-picture {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+}
+
 @media (max-width: 600px) {
-  .hobby-picture { width: 24px; height: 24px; flex-basis: 24px; }
+  .hobby-picture {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
 }
 
 /* Utaha-style rays with an illustration and a readable name at each end. */
 #hobby-lines {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 1; overflow: visible;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
 }
+
 .hobby-connector {
-  stroke: rgba(224, 237, 255, .65); stroke-width: 1.4;
+  stroke: rgba(224, 237, 255, .65);
+  stroke-width: 1.4;
   stroke-dasharray: none;
 }
+
 /* Dotted connections between members; hobby rays above remain solid. */
 #constellation-lines .connecting-line {
   stroke: #c5edf2;
@@ -705,23 +1275,41 @@ body {
   stroke-dashoffset: 0;
   animation: none;
 }
+
 /* The original inline hobby list is only a data source for the orbit layout. */
-.star .star-detail { display: none !important; }
+.star .star-detail {
+  display: none !important;
+}
+
 .orbit-hobby {
-  position: absolute; z-index: 4;
-  display: flex; flex-direction: column; align-items: center;
-  gap: 2px; width: 106px; padding: 0;
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 106px;
+  padding: 0;
   transform: translate(-50%, -50%);
-  background: none; border: 0; box-shadow: none;
-  color: white; font: 600 12px/1.15 system-ui, sans-serif;
-  text-align: center; text-shadow: 0 1px 6px #040815, 0 0 9px #040815;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  color: white;
+  font: 600 12px/1.15 system-ui, sans-serif;
+  text-align: center;
+  text-shadow: 0 1px 6px #040815, 0 0 9px #040815;
   pointer-events: none;
   transition: transform .22s ease, text-shadow .22s ease;
 }
+
 .orbit-hobby .hobby-picture {
-  width: 65px; height: 65px; flex: none; object-fit: contain;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,.3));
+  width: 65px;
+  height: 65px;
+  flex: none;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, .3));
 }
+
 .orbit-hobby.shared {
   z-index: 6;
   transform: translate(-50%, -50%) scale(1.5);
@@ -730,59 +1318,106 @@ body {
   color: #fff2c9;
   text-shadow: 0 0 9px #ffd478, 0 0 18px #ffd478;
 }
+
 .orbit-hobby.shared .hobby-picture {
   filter: drop-shadow(0 0 14px #ffd478);
   transform-origin: center 80%;
   animation: shared-hobby-jiggle 1.25s ease-in-out infinite;
 }
+
 @keyframes shared-hobby-jiggle {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  18% { transform: translateY(-3px) rotate(-6deg); }
-  36% { transform: translateY(1px) rotate(5deg); }
-  54% { transform: translateY(-2px) rotate(-4deg); }
-  72% { transform: translateY(1px) rotate(3deg); }
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  18% {
+    transform: translateY(-3px) rotate(-6deg);
+  }
+
+  36% {
+    transform: translateY(1px) rotate(5deg);
+  }
+
+  54% {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+
+  72% {
+    transform: translateY(1px) rotate(3deg);
+  }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .orbit-hobby.shared .hobby-picture { animation: none; }
+  .orbit-hobby.shared .hobby-picture {
+    animation: none;
+  }
 }
+
 /* Yasmin uses the same music sketch as Utaha, tinted to her pink colour. */
 .orbit-hobby[data-star-id="star3"][data-hobby="music"] .hobby-picture {
   filter: hue-rotate(140deg) saturate(1.7) drop-shadow(0 0 9px #ff8ba7);
 }
+
 .orbit-hobby[data-star-id="star3"][data-hobby="music"].shared .hobby-picture {
   filter: hue-rotate(140deg) saturate(1.7) drop-shadow(0 0 16px #ff8ba7);
 }
+
 @media (max-width: 600px) {
-  .orbit-hobby { width: 84px; font-size: 11px; }
-  .orbit-hobby .hobby-picture { width: 48px; height: 48px; }
-  .orbit-hobby.shared { font-size: 12px; }
+  .orbit-hobby {
+    width: 84px;
+    font-size: 11px;
+  }
+
+  .orbit-hobby .hobby-picture {
+    width: 48px;
+    height: 48px;
+  }
+
+  .orbit-hobby.shared {
+    font-size: 12px;
+  }
 }
 
 /* Selecting multiple stars updates the comparison without playing a scene. */
-#pair-caption { transition: none; }
-.difference-card, .difference-link { animation: none; }
+#pair-caption {
+  transition: none;
+}
+
+.difference-card,
+.difference-link {
+  animation: none;
+}
 
 /* Swap star artwork for both matching and nonmatching sun/moon profiles. */
 .star.illustrated-star.time-art-active::before {
   background-image: var(--time-art) !important;
 }
+
 .star.illustrated-star.time-other::before {
   filter: none;
 }
 
 /* Sun and moon stay fixed; the four stars are the draggable controls. */
-#sun-control, #moon-control {
+#sun-control,
+#moon-control {
   cursor: default;
   pointer-events: none;
   user-select: none;
 }
-.star.illustrated-star { touch-action: none; }
+
+.star.illustrated-star {
+  touch-action: none;
+}
+
 .star.star-dragging {
   cursor: grabbing;
   z-index: 12;
   animation: none;
   transition: none;
 }
+
 .time-control.star-over-target .celestial-art {
   filter: drop-shadow(0 0 14px #ffe6a1);
 }
@@ -796,7 +1431,10 @@ body.dragging-member #constellation-lines {
 }
 
 /* Sun/moon exploration shows only the person's star and name. */
-.star.time-art-active::after { content: none; }
+.star.time-art-active::after {
+  content: none;
+}
+
 .star.time-art-active .star-name {
   opacity: 1;
   visibility: visible;
@@ -807,6 +1445,7 @@ body.dragging-member #constellation-lines {
   font-size: 18px;
   font-weight: 800;
 }
+
 #star1.time-art-active .star-name,
 #star3.time-art-active .star-name {
   left: auto;
@@ -839,6 +1478,7 @@ body.dragging-member #constellation-lines {
 .orbit-hobby[data-star-id="star1"][data-hobby="running"] .hobby-picture {
   filter: hue-rotate(43deg) drop-shadow(0 0 6px rgba(255, 225, 80, .4));
 }
+
 .orbit-hobby.shared[data-star-id="star1"][data-hobby="running"] .hobby-picture {
   filter: hue-rotate(43deg) drop-shadow(0 0 14px #ffd478);
 }
