@@ -3,6 +3,20 @@ let selected = []; // array of selected star IDs
 const hoverTimers = {}; // store hover timers for each star
 const hoverState = {}; 
 
+// Utaha's illustrated star frames; all profile and connection behaviour remains here.
+const starArtPrefix = { Ishika: "ishika", Utaha: "uta", Yasmin: "uta", Linden: "linden" };
+function attachStarArt(el, star) {
+  el.classList.add("illustrated-star");
+  el.classList.add(`star-art-${star.id}`);
+  const prefix = starArtPrefix[star.name];
+  for (let frame = 1; frame <= 4; frame++) {
+    const url = `images/${prefix}${frame}.png`;
+    el.style.setProperty(`--art-${frame}`, `url("${url}")`);
+    const preload = new Image();
+    preload.src = url;
+  }
+}
+
 function renderStars() {
   const sky = document.getElementById("sky");
   const lines = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -19,7 +33,7 @@ function renderStars() {
     el.style.left = `${star.position.x}%`;
     el.style.top = `${star.position.y}%`;
     el.style.setProperty("--star-glow", star.favColor);
-    el.textContent = "★"; // Main star icon
+    attachStarArt(el, star); // Illustrated shape; the button stays interactive.
     const name = document.createElement("span");
     name.className = "star-name";
     name.textContent = star.name;

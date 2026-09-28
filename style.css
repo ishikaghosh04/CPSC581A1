@@ -677,3 +677,37 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .star, .flame, .ember, .campfire-art::before, .social-spark { animation: none; transition: none; }
 }
+
+
+/* Utaha's hand-drawn star shapes; Yasmin's labels, profiles and effects remain. */
+.star.illustrated-star {
+  width: 78px; height: 78px;
+  font-size: 0; /* The artwork replaces the original text star. */
+  isolation: isolate;
+}
+.star.illustrated-star::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: var(--art-1);
+  background-position: center; background-size: contain; background-repeat: no-repeat;
+  filter: var(--art-tint, none);
+  pointer-events: none;
+  z-index: 0;
+}
+.star.illustrated-star .star-name,
+.star.illustrated-star .star-detail { z-index: 1; }
+.star.illustrated-star.hover-glow-faint::before { background-image: var(--art-2); }
+.star.illustrated-star.hover-glow-bright::before { background-image: var(--art-3); }
+.star.illustrated-star.selected::before { background-image: var(--art-4); }
+.star-art-star2 { --art-tint: hue-rotate(150deg) saturate(1.3); }
+.star-art-star3 { --art-tint: hue-rotate(-47deg) saturate(1.45); }
+.star-art-star4 { --art-tint: hue-rotate(77deg) saturate(1.3); }
+@media (max-width: 600px) {
+  .star.illustrated-star { width: 62px; height: 62px; }
+}
+
+/* Begin with Utaha's original yellow artwork; reveal each member's colour on interaction. */
+.star.illustrated-star::before { filter: none; }
+.star.illustrated-star:is(:hover, :focus-visible, .selected, .time-match, .campfire-star)::before {
+  filter: var(--art-tint, none);
+}
