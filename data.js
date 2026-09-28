@@ -6,8 +6,8 @@ const stars = [
     sleep: "night owl",
     hoverTime: 3000,
     favColor: "#e8cd7c",
-    hobbies: ["music", "drawing", "running"],
-    position: { x: 20, y: 25 }
+    hobbies: ["Music", "Drawing", "Running"],
+    position: { x: 20, y: 30 }
   },
   {
     id: "star2",
@@ -16,8 +16,8 @@ const stars = [
     sleep: "early bird",
     hoverTime: 5000,
     favColor: "#2db2e6",
-    hobbies: ["music", "crocheting", "hiking", "swimming"],
-    position: { x: 70, y: 20 }
+    hobbies: ["Music", "Crocheting", "Hiking", "Swimming"],
+    position: { x: 70, y: 40 }
   },
   {
     id: "star3",
@@ -26,8 +26,8 @@ const stars = [
     sleep: "early bird",
     hoverTime: 4000,
     favColor: "#e05d5d",
-    hobbies: ["gym", "hiking"],
-    position: { x: 30, y: 65 }
+    hobbies: ["Gym", "Hiking", "Running", "Music"],
+    position: { x: 25, y: 65 }
   },
   {
     id: "star4",
@@ -35,8 +35,8 @@ const stars = [
     personality: "introvert",
     sleep: "night owl",
     hoverTime: 5000,
-    favColor: "#71b452",
-    hobbies: ["pickleball", "reading"],
-    position: { x: 75, y: 70 }
+    favColor: "#309035",
+    hobbies: ["Pickleball", "Reading", "Drawing"],
+    position: { x: 80, y: 75 }
   }
 ];

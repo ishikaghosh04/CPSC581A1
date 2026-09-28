@@ -8,8 +8,14 @@
 </head>
 
 <body>
+  <div id="time-controls" aria-label="Explore morning and night people">
+    <button id="sun-control" class="time-control" type="button" aria-label="Drag the animated sun to the centre to reveal morning people" aria-pressed="false"><span class="celestial-art sun-art" aria-hidden="true"><i class="sun-rays"></i><i class="sun-core"></i></span><small>Morning</small></button>
+    <button id="moon-control" class="time-control" type="button" aria-label="Drag the animated moon to the centre to reveal night people" aria-pressed="false"><span class="celestial-art moon-art" aria-hidden="true"><i class="moon-orbit"></i><i class="moon-core"></i><i class="moon-spark one">✦</i><i class="moon-spark two">✦</i></span><small>Night</small></button>
+    <div id="time-target" aria-hidden="true">Bring the sun or moon here</div>
+    <div id="time-announcement" class="screen-reader-only" role="status" aria-live="polite"></div>
+  </div>
   <div id="sky"></div>
-  <svg id="bg-stars" xmlns="http://www.w3.org/2000/svg" width="1296" height="948" viewBox="0 0 1296 948" fill="none">
+  <svg id="bg-stars" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="1296" height="948" viewBox="0 0 1296 948" fill="none">
     <path
       d="M110.22 897.316C110.22 899.526 108.653 901.316 106.72 901.316C104.787 901.316 103.22 899.526 103.22 897.316C103.22 895.107 104.787 893.316 106.72 893.316C108.653 893.316 110.22 895.107 110.22 897.316Z"
       fill="white" fill-opacity="0.28" />
@@ -359,7 +365,7 @@
 
 
 
-  <svg id="member1-bg-stars" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1362" height="875"
+  <svg id="member1-bg-stars" preserveAspectRatio="xMidYMid slice" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1362" height="875"
     viewBox="0 0 1362 875" fill="none">
     <path
       d="M62.7511 512.843C62.7513 511.132 61.6419 509.745 60.2731 509.745C58.9044 509.745 57.7945 511.132 57.7943 512.843C57.7941 514.554 58.9035 515.941 60.2722 515.941C61.641 515.941 62.7508 514.554 62.7511 512.843Z"
@@ -399,7 +405,7 @@
       fill="currentColor" fill-opacity="0.5" />
   </svg>
 
-  <svg id="member2-bg-stars" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1371" height="905"
+  <svg id="member2-bg-stars" preserveAspectRatio="xMidYMid slice" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1371" height="905"
     viewBox="0 0 1371 905" fill="none">
     <path
       d="M1220.35 364.231C1220.34 365.77 1221.34 367.02 1222.57 367.023C1223.8 367.026 1224.8 365.781 1224.8 364.242C1224.81 362.703 1223.81 361.453 1222.58 361.45C1221.35 361.447 1220.35 362.692 1220.35 364.231Z"
@@ -439,7 +445,7 @@
       fill="currentColor" fill-opacity="0.8" />
   </svg>
 
-  <svg id="member3-bg-stars" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1290" height="949"
+  <svg id="member3-bg-stars" preserveAspectRatio="xMidYMid slice" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1290" height="949"
     viewBox="0 0 1290 949" fill="none">
     <path
       d="M94.4581 342.786C94.4581 341.247 93.4601 340 92.2291 340C90.998 340 90 341.247 90 342.786C90 344.325 90.998 345.573 92.2291 345.573C93.4601 345.573 94.4581 344.325 94.4581 342.786Z"
@@ -479,7 +485,7 @@
       fill="currentColor" />
   </svg>
 
-  <svg id="member4-bg-stars" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1371" height="905"
+  <svg id="member4-bg-stars" preserveAspectRatio="xMidYMid slice" class="member-bg-stars" xmlns="http://www.w3.org/2000/svg" width="1371" height="905"
     viewBox="0 0 1371 905" fill="none">
     <path
       d="M150.462 543.334C150.462 541.796 149.464 540.548 148.233 540.548C147.002 540.548 146.004 541.796 146.004 543.334C146.004 544.873 147.002 546.121 148.233 546.121C149.464 546.121 150.462 544.873 150.462 543.334Z"
