@@ -118,35 +118,6 @@ body {
   animation: pulse 2s infinite;
 }
 
-.hobby-icon {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  width: 55px;
-  height: 55px;
-  opacity: 0.8;
-  transition: opacity 0.3s;
-  z-index: 2;
-}
-
-img.hobby-icon {
-  object-fit: contain;
-}
-
-.hobby-icon.shared-hobby {
-  transform: translate(-50%, -50%) scale(1.8);
-  filter: drop-shadow(0 0 8px gold);
-}
-
-.hobby-line {
-  stroke-width: 1;
-  opacity: 0.4;
-}
-
-.hobby-icon.shared {
-  opacity: 1;
-}
-
 #constellation-lines {
   position: absolute;
   top: 0;
@@ -164,4 +135,417 @@ img.hobby-icon {
   stroke-linecap: round;
   stroke-dasharray: 0.01 12.99;
   z-index: 1;
+}
+
+.star-name {
+  position: absolute;
+  top: calc(50% - 29px);
+  left: calc(100% + 14px);
+  font: 600 18px/1.3 system-ui, sans-serif;
+  white-space: nowrap;
+  color: white;
+  text-shadow: 0 1px 8px #000, 0 0 8px var(--star-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.star:hover .star-name,
+.star.selected .star-name {
+  opacity: 1;
+}
+
+/* Ishika and Yasmin have their names on the left. */
+#star1 .star-name,
+#star3 .star-name {
+  left: auto;
+  right: calc(100% + 14px);
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .star-name {
+    font-size: 15px;
+  }
+
+  #star1 .star-name,
+  #star3 .star-name {
+    right: calc(100% + 6px);
+  }
+
+  #star2 .star-name,
+  #star4 .star-name {
+    left: calc(100% + 6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-name {
+    transition: none;
+  }
+}
+
+#hobby-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.hobby-connector {
+  stroke: rgba(224, 237, 255, 0.65);
+  stroke-width: 1.4;
+}
+
+.orbit-hobby {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 106px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: 0;
+  box-shadow: none;
+  color: white;
+  font: 600 12px/1.15 system-ui, sans-serif;
+  text-align: center;
+  text-shadow: 0 1px 6px #040815, 0 0 9px #040815;
+  pointer-events: none;
+  transition: transform 0.22s ease, text-shadow 0.22s ease;
+}
+
+.orbit-hobby .hobby-picture {
+  display: block;
+  width: 65px;
+  height: 65px;
+  flex: none;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
+}
+
+/* Hobbies shared by every selected star glow and bounce. */
+.orbit-hobby.shared {
+  z-index: 6;
+  transform: translate(-50%, -50%) scale(1.5);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff2c9;
+  text-shadow: 0 0 9px #ffd478, 0 0 18px #ffd478;
+}
+
+.orbit-hobby.shared .hobby-picture {
+  filter: drop-shadow(0 0 14px #ffd478);
+  transform-origin: center 80%;
+  animation: shared-hobby-jiggle 1.25s ease-in-out infinite;
+}
+
+@keyframes shared-hobby-jiggle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  18% {
+    transform: translateY(-3px) rotate(-6deg);
+  }
+
+  36% {
+    transform: translateY(1px) rotate(5deg);
+  }
+
+  54% {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+
+  72% {
+    transform: translateY(1px) rotate(3deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-hobby.shared .hobby-picture {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .orbit-hobby {
+    width: 84px;
+    font-size: 11px;
+  }
+
+  .orbit-hobby .hobby-picture {
+    width: 48px;
+    height: 48px;
+  }
+
+  .orbit-hobby.shared {
+    font-size: 12px;
+  }
+}
+
+#time-controls {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.time-control {
+  position: absolute;
+  top: 16px;
+  left: 40%;
+  z-index: 2;
+  width: 96px;
+  height: 110px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff9e9;
+  font: 600 12px/1.2 system-ui, sans-serif;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  pointer-events: auto;
+  transition: filter .2s;
+}
+
+.time-control small {
+  display: block;
+  font: inherit;
+  margin-top: 3px;
+  text-shadow: 0 0 8px #1b213d;
+}
+
+#moon-control {
+  left: auto;
+  right: 40%;
+}
+
+.time-control.dragging {
+  cursor: grabbing;
+}
+
+.time-control:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.time-control[aria-pressed="true"] {
+  filter: brightness(1.3);
+}
+
+.celestial-art {
+  display: block;
+  position: relative;
+  margin: auto;
+  width: 82px;
+  height: 82px;
+}
+
+.sun-rays {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, #ffca64 0deg 9deg, transparent 10deg 30deg);
+  filter: drop-shadow(0 0 14px #ffb652);
+  animation: sun-spin 18s linear infinite;
+}
+
+.sun-core {
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #fff8bb, #ffce54 54%, #f78337 100%);
+  box-shadow: 0 0 12px 5px #ffcc6699, 0 0 38px 12px #ffab4e66;
+  animation: sun-breathe 2.6s ease-in-out infinite alternate;
+}
+
+.moon-orbit {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid #c3d5ff66;
+  border-radius: 50%;
+  animation: sun-spin 10s linear infinite;
+}
+
+.moon-core {
+  position: absolute;
+  inset: 11px 16px 13px 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 25% 35%, #fffefa, #dce4ff 62%, #8ca9e2);
+  box-shadow: 0 0 16px #c8d8ff, 0 0 42px #93b6ff88;
+  animation: moon-float 3.5s ease-in-out infinite alternate;
+}
+
+.moon-core::after {
+  content: "";
+  position: absolute;
+  inset: -7px -12px 7px 15px;
+  border-radius: 50%;
+  background: #0a0a1a;
+  box-shadow: -4px 1px 5px #ffffff33;
+}
+
+.moon-spark {
+  position: absolute;
+  color: #ddebff;
+  font: 19px/1 system-ui;
+  text-shadow: 0 0 12px #ddebff;
+  animation: moon-twinkle 1.8s ease-in-out infinite alternate;
+}
+
+.moon-spark.one {
+  top: 8px;
+  right: 5px;
+}
+
+.moon-spark.two {
+  bottom: 8px;
+  left: 1px;
+  font-size: 12px;
+  animation-delay: .8s;
+}
+
+@keyframes sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sun-breathe {
+  to {
+    transform: scale(1.09);
+    box-shadow: 0 0 18px 8px #ffdc8abb, 0 0 45px 17px #ff9c4b77;
+  }
+}
+
+@keyframes moon-float {
+  to {
+    transform: translateY(-5px) rotate(-4deg);
+  }
+}
+
+@keyframes moon-twinkle {
+  to {
+    opacity: .3;
+    transform: scale(.65);
+  }
+}
+
+#time-target {
+  position: absolute;
+  left: 50%;
+  top: 43%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 190px;
+  height: 105px;
+  border: 2px dashed #cdd7f488;
+  border-radius: 55%;
+  color: #e5eaff;
+  background: #1b234c55;
+  font: 600 12px/1.3 system-ui, sans-serif;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .2s, background .2s;
+}
+
+#time-controls.dragging #time-target {
+  opacity: 1;
+}
+
+#time-controls.in-target #time-target {
+  background: #f8e7a755;
+}
+
+.screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Stars for the chosen rhythm brighten and reveal their names. */
+.star.time-match {
+  scale: 1.37;
+  filter: drop-shadow(0 0 18px var(--time-color)) drop-shadow(0 0 28px var(--time-color));
+}
+
+.star.time-match::after {
+  content: attr(data-time-label);
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  translate: -50% -100%;
+  white-space: nowrap;
+  color: var(--time-color);
+  font: 700 11px/1 system-ui, sans-serif;
+  text-shadow: 0 0 9px var(--time-color);
+}
+
+.star.time-match .star-name {
+  opacity: 1;
+  color: var(--time-color);
+  font-size: 19px;
+  font-weight: 800;
+  text-shadow: 0 0 12px var(--time-color), 0 1px 8px #080a20;
+}
+
+.star.time-match:not(.selected) .star-name {
+  top: 50%;
+  left: calc(100% + 14px);
+  transform: translateY(-50%);
+}
+
+#star1.time-match:not(.selected) .star-name,
+#star3.time-match:not(.selected) .star-name {
+  left: auto;
+  right: calc(100% + 14px);
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  #sun-control {
+    left: 14px;
+  }
+
+  #moon-control {
+    left: auto;
+    right: 14px;
+  }
+
+  .star.time-match {
+    scale: 1.23;
+  }
+
+  .star.time-match .star-name {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star.time-match,
+  .time-control,
+  .sun-rays,
+  .sun-core,
+  .moon-orbit,
+  .moon-core,
+  .moon-spark {
+    animation: none;
+    transition: none;
+  }
 }

@@ -26,7 +26,7 @@ const stars = [
     sleep: "early bird",
     hoverTime: 4000,
     favColor: "#e05d5d",
-    hobbies: ["gym", "hiking"],
+    hobbies: ["gym", "hiking", "running"],
     position: { x: 30, y: 65 }
   },
   {

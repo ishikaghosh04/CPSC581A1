@@ -8,6 +8,12 @@
 </head>
 
 <body>
+  <div id="time-controls" aria-label="Explore morning and night people">
+    <button id="sun-control" class="time-control" type="button" aria-label="Drag the animated sun to the centre to reveal morning people" aria-pressed="false"><span class="celestial-art sun-art" aria-hidden="true"><i class="sun-rays"></i><i class="sun-core"></i></span><small>Morning</small></button>
+    <button id="moon-control" class="time-control" type="button" aria-label="Drag the animated moon to the centre to reveal night people" aria-pressed="false"><span class="celestial-art moon-art" aria-hidden="true"><i class="moon-orbit"></i><i class="moon-core"></i><i class="moon-spark one">✦</i><i class="moon-spark two">✦</i></span><small>Night</small></button>
+    <div id="time-target" aria-hidden="true">Bring the sun or moon here</div>
+    <div id="time-announcement" class="screen-reader-only" role="status" aria-live="polite"></div>
+  </div>
   <div id="sky"></div>
   <svg id="bg-stars" xmlns="http://www.w3.org/2000/svg" width="1296" height="948" viewBox="0 0 1296 948" fill="none">
     <path

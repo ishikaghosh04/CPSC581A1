@@ -3,6 +3,8 @@ let selected = []; // array of selected star IDs
 const hoverTimers = {}; // store hover timers for each star
 const hoverState = {};
 
+const hoveredHobbyStars = new Set();
+
 // Components of the following code is generated using deepseek api
 const starSpritePrefixes = {
   Ishika: "ishika",
@@ -11,13 +13,19 @@ const starSpritePrefixes = {
   Linden: "linden"
 };
 
+// Per-state art overrides; states not listed fall back to the star's prefix set.
+// Yasmin's own drawings exist for states 2 and 4; states 1 and 3 still use the uta set.
+const starSpriteOverrides = {
+  Yasmin: { 2: "yasmin2.png", 4: "yasmin4.png" }
+};
+
 const SPRITE_STATE_COUNT = 4;
 
-function applyStarSprite(el, prefix) {
+function applyStarSprite(el, prefix, overrides) {
   el.classList.add("star-image");
 
   for (let state = 1; state <= SPRITE_STATE_COUNT; state++) {
-    const url = `images/${prefix}${state}.png`;
+    const url = `images/${(overrides && overrides[state]) || `${prefix}${state}.png`}`;
     el.style.setProperty(`--star-frame-${state}`, `url("${url}")`);
 
     const preload = new Image();
@@ -43,7 +51,12 @@ function renderStars() {
     el.style.top = `${star.position.y}%`;
     el.style.setProperty("--star-glow", star.favColor);
 
-    applyStarSprite(el, starSpritePrefixes[star.name]);
+    applyStarSprite(el, starSpritePrefixes[star.name], starSpriteOverrides[star.name]);
+
+    const name = document.createElement("span");
+    name.className = "star-name";
+    name.textContent = star.name;
+    el.appendChild(name);
 
     // user interactions
     el.addEventListener("mouseenter", () => handleHoverStart(star));
@@ -54,6 +67,7 @@ function renderStars() {
   });
 
   drawConstellation();
+  layoutAllHobbyIcons();
 }
 
 function isSelected(id) {
@@ -62,6 +76,9 @@ function isSelected(id) {
 
 function handleHoverStart(star) {
   if (isSelected(star.id)) return;
+
+  hoveredHobbyStars.add(star.id);
+  layoutAllHobbyIcons();
 
   clearTimeout(hoverTimers[star.id]);
   hoverState[star.id] = true;
@@ -87,6 +104,9 @@ function handleHoverStart(star) {
 }
 
 function handleHoverEnd(star) {
+  hoveredHobbyStars.delete(star.id);
+  layoutAllHobbyIcons();
+
   clearTimeout(hoverTimers[star.id]);
   delete hoverTimers[star.id];
   delete hoverState[star.id];
@@ -98,6 +118,9 @@ function handleHoverEnd(star) {
 }
 
 function clearHover(starId) {
+  hoveredHobbyStars.delete(starId);
+  layoutAllHobbyIcons();
+
   clearTimeout(hoverTimers[starId]);
   delete hoverTimers[starId];
   delete hoverState[starId];
@@ -118,7 +141,7 @@ function handleClick(star) {
     document.getElementById(star.id).style.setProperty("--star-glow", "white");
     toggleBgStars(star, false);
     drawConstellation();
-    layoutAllHobbyIcons(); // removes this star's icons and re-validates everyone else's
+    layoutAllHobbyIcons(); // removes this star's labels and re-validates everyone else's
     return;
   }
 
@@ -129,7 +152,7 @@ function handleClick(star) {
   el.style.setProperty("--star-glow", star.favColor);
   toggleBgStars(star, true);
   drawConstellation();
-  layoutAllHobbyIcons(); // adds this star's icons and re-validates everyone else's
+  layoutAllHobbyIcons(); // adds this star's labels and re-validates everyone else's
 }
 
 function drawConstellation() {
@@ -184,168 +207,98 @@ function sharedTraits(id1, id2) {
   ];
 }
 
-// Components of the following logic is generated using Claude.ai
 const hobbyImages = {
   Ishika: { music: "music-ishika.png", drawing: "drawing-ishika.png", gym: "gym-ishika.png" },
   Utaha: { music: "music-uta.png", crocheting: "crochet.png", hiking: "hiking-uta.png", swimming: "swimming.png" },
-  Yasmin: { gym: "gym-yasmin.png", hiking: "hiking-yasmin.png" },
+  Yasmin: { gym: "gym-yasmin.png", hiking: "hiking-yasmin.png", running: "running.png" },
   Linden: { pickleball: "pickleball.png", reading: "reading.png", drawing: "drawing-linden.png" }
 };
 
-function hobbyIcon(star, hobby) {
-  const file = (hobbyImages[star.name] || {})[hobby];
-  if (!file) return null;
+function hobbyLabel(star, hobby) {
+  const file = (hobbyImages[star.name] || {})[hobby.toLowerCase()];
 
-  const image = document.createElement("img");
-  image.src = `images/hobbies/${file}`;
-  image.alt = hobby;
-  return image;
-}
+  const item = document.createElement("div");
+  item.className = "orbit-hobby";
+  item.dataset.starId = star.id;
+  item.dataset.hobby = hobby.toLowerCase();
 
-// Decide hobby icon positions randomly while avoiding collisions with star-star lines
-const HOBBY_RADIUS_MIN = 110; // px, distance from star center to icon
-const HOBBY_RADIUS_RANGE = 10;
-const MIN_LINE_ANGLE = 0.7;      // rad (~35 deg): keep hobby lines off the same star's connecting lines
-const MIN_ICON_GAP = 0.6;        // rad (~35 deg): keep one star's own icons apart
-const MIN_LINE_CLEARANCE = 35;   // px: keep icons off OTHER stars' connecting lines
-const MAX_PLACEMENT_TRIES = 60; // tries max 60 angles before giving up 
-
-const hobbyLayoutCache = {}; // { starId: { hobbyName: { angle, radius } } }
-
-function ccw(a, b, c) {
-  return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
-}
-
-function segmentsIntersect(a, b, c, d) {
-  return ccw(a, c, d) !== ccw(b, c, d) && ccw(a, b, c) !== ccw(a, b, d);
-}
-
-function distToSegment(p, a, b) {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const lengthSq = dx * dx + dy * dy;
-  if (lengthSq === 0) return Math.hypot(p.x - a.x, p.y - a.y);
-  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / lengthSq));
-  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
-}
-
-function angleDiff(a, b) {
-  const d = Math.abs(a - b) % (2 * Math.PI);
-  return d > Math.PI ? 2 * Math.PI - d : d;
-}
-
-// All star-star lines currently drawn by drawConstellation()
-function constellationSegments() {
-  const segs = [];
-  for (let i = 0; i < selected.length; i++) {
-    for (let j = i + 1; j < selected.length; j++) {
-      const a = starCenter(selected[i]);
-      const b = starCenter(selected[j]);
-      if (a && b) segs.push({ a, b, ids: [selected[i], selected[j]] });
-    }
-  }
-  return segs;
-}
-
-function isValidSpot(star, center, angle, radius, segs, takenAngles) {
-  const end = {
-    x: center.x + radius * Math.cos(angle),
-    y: center.y + radius * Math.sin(angle)
-  };
-
-  // keep this star's own icons apart from each other
-  if (takenAngles.some(t => angleDiff(angle, t) < MIN_ICON_GAP)) return false;
-
-  for (const seg of segs) {
-    if (seg.ids.includes(star.id)) {
-      const otherId = seg.ids.find(id => id !== star.id);
-      const otherCenter = starCenter(otherId);
-      if (!otherCenter) continue;
-      const lineAngle = Math.atan2(otherCenter.y - center.y, otherCenter.x - center.x);
-      if (angleDiff(angle, lineAngle) < MIN_LINE_ANGLE) return false;
-    } else {
-      // a line between two OTHER stars: check real intersection and icon clearance
-      if (segmentsIntersect(center, end, seg.a, seg.b)) return false;
-      if (distToSegment(end, seg.a, seg.b) < MIN_LINE_CLEARANCE) return false;
-    }
+  if (file) {
+    const picture = document.createElement("img");
+    picture.className = "hobby-picture";
+    picture.src = `images/hobbies/${file}`;
+    picture.alt = ""; // The visible hobby name provides the accessible label.
+    item.appendChild(picture);
   }
 
-  return true;
+  const label = document.createElement("span");
+  label.textContent = hobby;
+  item.appendChild(label);
+
+  return item;
 }
 
-function findSpot(star, center, segs, takenAngles) {
-  for (let tries = 0; tries < MAX_PLACEMENT_TRIES; tries++) {
-    const angle = Math.random() * 2 * Math.PI;
-    const radius = HOBBY_RADIUS_MIN + Math.random() * HOBBY_RADIUS_RANGE;
-    if (isValidSpot(star, center, angle, radius, segs, takenAngles)) {
-      return { angle, radius };
-    }
+const hobbyPositions = {
+  star1: { // Ishika
+    music: { x: -50, y: 200 }, drawing: { x: -120, y: -40 }
+  },
+  star2: { // Utaha
+    music: { x: 30, y: -80 }, crocheting: { x: 70, y: -50 },
+    hiking: { x: 110, y: 0 }, swimming: { x: 80, y: 150 }
+  },
+  star3: { // Yasmin
+    gym: { x: 200, y: 190 }, hiking: { x: 20, y: 300 }, running: { x: -180, y: 200 }
+  },
+  star4: { // Linden
+    pickleball: { x: 0, y: 200 }, reading: { x: 80, y: 300 }, drawing: { x: 80, y: 50 }
   }
-  return null;
-}
+};
 
-function renderHobbyIcons(star, segs) {
-  const sky = document.getElementById("sky");
-  const svg = document.getElementById("hobby-lines");
-  const center = starCenter(star.id);
-  if (!sky || !svg || !center) return;
-
-  svg.setAttribute("viewBox", `0 0 ${sky.clientWidth} ${sky.clientHeight}`);
-
-  const cached = (hobbyLayoutCache[star.id] ||= {});
-  const takenAngles = [];
-
-  star.hobbies.forEach(hobby => {
-    const icon = hobbyIcon(star, hobby);
-    if (!icon) return;
-
-    // Reuse the cached position unless it's missing or now collides with a new line
-    let spot = cached[hobby];
-    if (!spot || !isValidSpot(star, center, spot.angle, spot.radius, segs, takenAngles)) {
-      spot = findSpot(star, center, segs, takenAngles) || spot || {
-        angle: Math.random() * 2 * Math.PI,
-        radius: HOBBY_RADIUS_MIN
-      };
-      cached[hobby] = spot;
-    }
-    takenAngles.push(spot.angle);
-
-    const iconX = center.x + spot.radius * Math.cos(spot.angle);
-    const iconY = center.y + spot.radius * Math.sin(spot.angle);
-
-    icon.classList.add("hobby-icon");
-    icon.dataset.starId = star.id;
-    icon.dataset.hobby = hobby.toLowerCase();
-    icon.title = hobby;
-    icon.style.left = `${iconX}px`;
-    icon.style.top = `${iconY}px`;
-    sky.appendChild(icon);
-
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", center.x);
-    line.setAttribute("y1", center.y);
-    line.setAttribute("x2", iconX);
-    line.setAttribute("y2", iconY);
-    line.setAttribute("stroke", "white");
-    line.setAttribute("class", "hobby-line");
-    line.dataset.starId = star.id;
-    svg.appendChild(line);
-  });
-}
-
-// Rebuilds every selected star's hobby icons. Called after any selection change (and on resize)
+// Rebuilds every shown star's hobby labels. Called after any selection or
+// hover change (and on resize).
 function layoutAllHobbyIcons() {
-  document.querySelectorAll(".hobby-icon, .hobby-line").forEach(el => el.remove());
+  const sky = document.getElementById("sky");
+  const lines = document.getElementById("hobby-lines");
+  if (!sky || !lines) return;
 
-  const segs = constellationSegments();
-  selected.forEach(id => {
+  sky.querySelectorAll(".orbit-hobby").forEach(item => item.remove());
+  lines.replaceChildren();
+  lines.setAttribute("viewBox", `0 0 ${sky.clientWidth} ${sky.clientHeight}`);
+
+  [...new Set([...selected, ...hoveredHobbyStars])].forEach(id => {
     const star = stars.find(s => s.id === id);
-    if (star) renderHobbyIcons(star, segs);
+    const center = starCenter(id);
+    if (!star || !center) return;
+
+    const hobbies = star.hobbies;
+    const count = hobbies.length;
+    const radius = Math.min(155, Math.max(90, sky.clientWidth * .115));
+    const spread = Math.min(Math.PI * .95, (count - 1) * .57);
+    // Point away from the nearest horizontal edge; place hobbies above the star.
+    const direction = center.x < sky.clientWidth / 2 ? -Math.PI / 2 + .22 : -Math.PI / 2 - .22;
+
+    hobbies.forEach((hobby, index) => {
+      const angle = direction - spread / 2 + (count === 1 ? 0 : index * spread / (count - 1));
+      const offset = hobbyPositions[id]?.[hobby.toLowerCase()] || { x: 0, y: 0 };
+      const x = Math.max(53, Math.min(sky.clientWidth - 53, center.x + radius * Math.cos(angle) + offset.x));
+      const y = Math.max(78, Math.min(sky.clientHeight - 38, center.y + radius * Math.sin(angle) + offset.y));
+
+      const item = hobbyLabel(star, hobby);
+      item.style.left = `${x}px`;
+      item.style.top = `${y}px`;
+      sky.appendChild(item);
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("class", "hobby-connector");
+      line.setAttribute("x1", center.x);
+      line.setAttribute("y1", center.y);
+      line.setAttribute("x2", x);
+      line.setAttribute("y2", y);
+      lines.appendChild(line);
+    });
   });
 
   updateSharedHobbyHighlights();
 }
-
 
 function sharedSelectedHobbies() {
   if (selected.length < 2) return [];
@@ -357,8 +310,8 @@ function sharedSelectedHobbies() {
 function updateSharedHobbyHighlights() {
   const shared = sharedSelectedHobbies();
 
-  document.querySelectorAll(".hobby-icon").forEach(icon => {
-    icon.classList.toggle("shared-hobby", shared.includes(icon.dataset.hobby));
+  document.querySelectorAll(".orbit-hobby").forEach(item => {
+    item.classList.toggle("shared", shared.includes(item.dataset.hobby));
   });
 }
 
@@ -379,3 +332,97 @@ window.addEventListener("resize", () => {
 });
 
 renderStars();
+
+function setupTimeControls() {
+  const container = document.getElementById("time-controls");
+  const target = document.getElementById("time-target");
+  const announcement = document.getElementById("time-announcement");
+  const controls = [document.getElementById("sun-control"), document.getElementById("moon-control")];
+  let active = null;
+
+  function setMode(mode) {
+    active = mode;
+    controls.forEach(control => {
+      const chosen = control.id === (mode === "morning" ? "sun-control" : "moon-control") && mode !== null;
+      control.setAttribute("aria-pressed", String(chosen));
+      control.style.left = chosen ? `${window.innerWidth / 2 - control.offsetWidth / 2}px` : "";
+      control.style.top = chosen ? `${window.innerHeight * .43 - control.offsetHeight / 2}px` : "";
+      if (!chosen) control.style.right = "";
+      else control.style.right = "auto";
+    });
+    paint(mode);
+  }
+
+  function paint(mode) {
+    controls.forEach(control => control.setAttribute("aria-pressed", String(control.id === (mode === "morning" ? "sun-control" : "moon-control") && mode !== null)));
+    stars.forEach(star => {
+      const el = document.getElementById(star.id);
+      const matches = mode === "morning" ? star.sleep === "early bird" : mode === "night" && star.sleep === "night owl";
+      el.classList.toggle("time-match", matches);
+      if (matches) {
+        el.style.setProperty("--time-color", mode === "morning" ? "#ffe092" : "#bed4ff");
+        el.dataset.timeLabel = mode === "morning" ? "☀ Morning person" : "☾ Night person";
+      } else {
+        el.style.removeProperty("--time-color");
+        delete el.dataset.timeLabel;
+      }
+    });
+    const names = stars.filter(star => mode === "morning" ? star.sleep === "early bird" : mode === "night" && star.sleep === "night owl").map(star => star.name);
+    announcement.textContent = mode ? `${mode === "morning" ? "Morning people" : "Night people"}: ${names.join(" and ")}.` : "Morning and night highlights cleared.";
+  }
+
+  controls.forEach(control => {
+    const mode = control.id === "sun-control" ? "morning" : "night";
+    let origin = null;
+    let suppressClick = false;
+    control.addEventListener("pointerdown", event => {
+      if (event.button !== 0) return;
+      const box = control.getBoundingClientRect();
+      origin = { x: event.clientX, y: event.clientY, left: box.left, top: box.top, moved: false };
+      control.setPointerCapture(event.pointerId);
+    });
+    control.addEventListener("pointermove", event => {
+      if (!origin) return;
+      if (!origin.moved && Math.hypot(event.clientX - origin.x, event.clientY - origin.y) < 5) return;
+      origin.moved = true;
+      control.classList.add("dragging");
+      container.classList.add("dragging");
+      control.style.right = "auto";
+      control.style.left = `${Math.max(0, Math.min(window.innerWidth - control.offsetWidth, origin.left + event.clientX - origin.x))}px`;
+      control.style.top = `${Math.max(0, Math.min(window.innerHeight - control.offsetHeight, origin.top + event.clientY - origin.y))}px`;
+      const box = target.getBoundingClientRect();
+      const inTarget = event.clientX >= box.left - 55 && event.clientX <= box.right + 55 && event.clientY >= box.top - 65 && event.clientY <= box.bottom + 65;
+      container.classList.toggle("in-target", inTarget);
+      paint(inTarget ? mode : null);
+    });
+    control.addEventListener("pointerup", () => {
+      if (!origin) return;
+      const moved = origin.moved;
+      origin = null;
+      control.classList.remove("dragging");
+      container.classList.remove("dragging");
+      if (moved) {
+        suppressClick = true;
+        const inTarget = container.classList.contains("in-target");
+        setMode(inTarget ? mode : null);
+      }
+      container.classList.remove("in-target");
+    });
+    control.addEventListener("pointercancel", () => {
+      origin = null;
+      control.classList.remove("dragging");
+      container.classList.remove("dragging", "in-target");
+      setMode(active);
+    });
+    control.addEventListener("click", () => {
+      if (suppressClick) { suppressClick = false; return; }
+      setMode(active === mode ? null : mode);
+    });
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && active) setMode(null);
+  });
+  window.addEventListener("resize", () => { if (active) setMode(active); });
+}
+
+setupTimeControls();
