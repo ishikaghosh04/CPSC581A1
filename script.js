@@ -429,10 +429,6 @@ function toggleBgStars(star, show) {
   }
 }
 
-function blendColors(hex1, hex2) {
-  // simple midpoint RGB blend — fill in when you get to bg color logic
-}
-
 window.addEventListener("resize", drawConstellation);
 
 renderStars();
